@@ -2868,6 +2868,32 @@
             </button>
           </div>
         </form>
+
+        <div class="ecosystem-sidebar">
+          <div class="ecosystem-sidebar-title">
+            ابزارهای تکمیلی یادگیری
+          </div>
+          <a class="ecosystem-sidebar-card"
+             href="https://mr-qaderi.github.io/Vocabulary-Learner/"
+             target="_blank"
+             rel="noopener noreferrer">
+            <div class="ecosystem-sidebar-icon">▣</div>
+            <div>
+              <strong>LingoDeck | زبان‌یار</strong>
+              <span>واژه‌های این مکالمه را در ابزار تخصصی لغت، با معنی، مثال و کاربرد تمرین کن.</span>
+            </div>
+          </a>
+          <a class="ecosystem-sidebar-card"
+             href="https://mr-qaderi.github.io/LingoPen/"
+             target="_blank"
+             rel="noopener noreferrer">
+            <div class="ecosystem-sidebar-icon">✎</div>
+            <div>
+              <strong>LingoPen | قلم‌یار</strong>
+              <span>متن‌هایت را اصلاح کن و طبیعی‌تر بنویس.</span>
+            </div>
+          </a>
+        </div>
       </aside>
       <section class="panel chat-panel" aria-labelledby="chat-heading">
         <div class="chat-head">
@@ -7111,7 +7137,102 @@
             dir +
             '"><head><meta charset="utf-8"><title>LingoRole Report</title><style>@page{margin:1.8cm}body{font-family:Tahoma,Arial,sans-serif;color:#172033;line-height:1.85;font-size:11pt;direction:' +
             dir +
-            "}h1{font-size:24pt}h2{font-size:16pt;margin-top:24px;border-bottom:2px solid #dbe2ec;padding-bottom:7px;color:#24418c}h3{font-size:12pt;margin-bottom:6px}p{margin:8px 0}.cover{padding:20px;background:#f3f5fc;border:1px solid #dce2ed}.kicker{font-size:10pt;color:#3658a0;letter-spacing:1px}.meta{border-collapse:collapse;width:100%;margin:20px 0}.meta td,.meta th{padding:8px;border:1px solid #d6deea;vertical-align:top}.meta th{width:28%;background:#f4f6fa}.item{margin:12px 0 18px;padding:10px;border:1px solid #e0e6ed;page-break-inside:avoid}.quote{background:#f5f7fb;padding:10px;margin:7px 0;unicode-bidi:embed;white-space:normal}.caption{font-size:9pt;color:#697589}.page-break{page-break-before:always}a{color:#2563eb}</style></head><body>" +
+            "}h1{font-size:24pt}h2{font-size:16pt;margin-top:24px;border-bottom:2px solid #dbe2ec;padding-bottom:7px;color:#24418c}h3{font-size:12pt;margin-bottom:6px}p{margin:8px 0}.cover{padding:20px;background:#f3f5fc;border:1px solid #dce2ed}.kicker{font-size:10pt;color:#3658a0;letter-spacing:1px}.meta{border-collapse:collapse;width:100%;margin:20px 0}.meta td,.meta th{padding:8px;border:1px solid #d6deea;vertical-align:top}.meta th{width:28%;background:#f4f6fa}.item{margin:12px 0 18px;padding:10px;border:1px solid #e0e6ed;page-break-inside:avoid}.quote{background:#f5f7fb;padding:10px;margin:7px 0;unicode-bidi:embed;white-space:normal}.caption{font-size:9pt;color:#697589}.page-break{page-break-before:always}a{color:#2563eb}
+/* LingoRole v1.2 visual refinement
+   Focus: make learning outcome more visible without adding clutter */
+.lesson-action .btn-lesson {
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 10px 28px -14px color-mix(in srgb, var(--accent) 70%, transparent);
+  min-height: 44px;
+  padding-inline: 18px;
+}
+.lesson-action .btn-lesson:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.finish-help {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  color: var(--muted2);
+}
+
+.report-overview {
+  position: relative;
+  overflow: hidden;
+}
+
+.report-overview:before {
+  content: "✦";
+  position: absolute;
+  inset-inline-end: 18px;
+  top: 12px;
+  font-size: 30px;
+  opacity: .15;
+  color: var(--accent);
+}
+
+.ecosystem-sidebar {
+  margin: 0 22px 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.ecosystem-sidebar-title {
+  font-size: 11px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.ecosystem-sidebar-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 11px;
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface2);
+  color: var(--text);
+  text-decoration: none;
+  transition: .15s ease;
+}
+
+.ecosystem-sidebar-card:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.ecosystem-sidebar-card strong {
+  display: block;
+  font-size: 11px;
+}
+
+.ecosystem-sidebar-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.ecosystem-sidebar-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--glow);
+  color: var(--accent);
+  font-size: 13px;
+  flex: 0 0 auto;
+}
+
+</style></head><body>" +
             body +
             "</body></html>"
           );
