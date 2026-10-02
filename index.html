@@ -393,47 +393,66 @@
       }
       .more-settings {
         margin-top: 22px;
-        border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
-        background: color-mix(in srgb, var(--accent) 6%, transparent);
-        border-radius: 14px;
-        padding: 0 15px;
-        transition: all 0.2s ease;
+        border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+        background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 4%, transparent), color-mix(in srgb, var(--surface) 50%, transparent));
+        border-radius: 16px;
+        padding: 0 18px;
+        box-shadow: 0 6px 16px -6px var(--ring);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
-      .more-settings:hover {
-        background: color-mix(in srgb, var(--accent) 10%, transparent);
-        border-color: var(--accent);
+      .more-settings:hover:not([open]) {
+        border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+        background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+        box-shadow: 0 8px 20px -6px var(--ring);
+        transform: translateY(-2px);
       }
       .more-settings[open] {
         background: var(--surface2);
         border-color: var(--borderstrong);
-        padding-bottom: 16px;
+        box-shadow: inset 0 2px 10px #00000006;
+        padding-bottom: 20px;
       }
       .more-settings summary {
         list-style: none;
-        padding: 14px 0;
+        padding: 16px 0;
         cursor: pointer;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-size: 13px;
         font-weight: 800;
-        color: var(--accent);
-      }
-      .more-settings[open] summary {
-        border-bottom: 1px dashed var(--border);
-        padding-bottom: 12px;
-        margin-bottom: 6px;
         color: var(--text);
+        transition: color 0.2s;
       }
       .more-settings summary::-webkit-details-marker {
         display: none;
       }
-      .chevron {
-        font-size: 18px;
-        transition: transform 0.2s;
+      .more-settings[open] summary {
+        border-bottom: 1px dashed var(--border);
+        padding-bottom: 14px;
+        margin-bottom: 12px;
+        color: var(--muted);
+      }
+      .more-settings .chevron {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+        border-radius: 9px;
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .more-settings:hover:not([open]) .chevron {
+        background: var(--accent);
+        color: #fff;
+        transform: scale(1.08);
       }
       .more-settings[open] .chevron {
         transform: rotate(180deg);
+        background: var(--surface3);
         color: var(--muted);
       }
       .scene-form fieldset {
