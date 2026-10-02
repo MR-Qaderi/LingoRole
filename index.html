@@ -44,6 +44,9 @@
         --user2: #6644dc;
         --glow: #e9edff;
         --header: #f3f5f9dd;
+        --lesson-a: #047857;
+        --lesson-b: #0e7490;
+        --lesson-ink: #0f766e;
       }
       [data-theme="dark"] {
         color-scheme: dark;
@@ -68,6 +71,7 @@
         --user2: #6240bb;
         --glow: #222047;
         --header: #0b1121db;
+        --lesson-ink: #5eead4;
       }
       * {
         box-sizing: border-box;
@@ -1325,30 +1329,94 @@
         padding-top: 8px;
         unicode-bidi: plaintext;
       }
+      /* Report: LingoDeck bridge card (copy the words, then practise them there). */
       .ecosystem-card {
-        padding: 15px 18px;
-        background: var(--surface2);
-        border: 1px solid var(--borderstrong);
-        border-radius: 17px;
-        margin-top: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        text-decoration: none;
+        --deck: #f59e0b;
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        column-gap: 16px;
+        row-gap: 14px;
+        align-items: start;
+        margin-top: 20px;
+        padding: 20px 22px;
         color: var(--text);
+        border: 1px solid color-mix(in oklab, var(--borderstrong) 50%, var(--deck));
+        border-radius: 22px;
+        background:
+          radial-gradient(
+            380px 160px at 100% 0%,
+            color-mix(in oklab, var(--deck) 16%, transparent),
+            transparent 72%
+          ),
+          linear-gradient(
+            120deg,
+            color-mix(in oklab, var(--surface) 90%, var(--deck)),
+            var(--surface2)
+          );
+        box-shadow: var(--shadow), var(--inner);
       }
-      .ecosystem-card strong {
-        font-size: 12px;
+      .ecosystem-card::before {
+        content: "";
+        position: absolute;
+        inset-inline-start: 0;
+        top: 20px;
+        bottom: 20px;
+        width: 3px;
+        border-radius: 6px;
+        background: var(--deck);
       }
-      .ecosystem-card p {
+      .deck-bridge-logo {
+        width: 50px;
+        height: 50px;
+        padding: 9px;
+        border-radius: 16px;
+        background: #fff;
+        color: #000;
+        border: 1px solid #ffffff80;
+        box-shadow: 0 6px 20px #0002;
+      }
+      .deck-bridge-logo svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .deck-bridge-copy {
+        min-width: 0;
+      }
+      .deck-bridge-copy h3 {
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.7;
+      }
+      .deck-bridge-copy p {
+        font-size: 11.5px;
+        line-height: 1.95;
         color: var(--muted);
-        font-size: 10px;
-        margin-top: 3px;
+        margin-top: 4px;
       }
-      .ecosystem-card:hover {
-        border-color: var(--accent);
-        text-decoration: none;
+      .deck-bridge-copy .deck-bridge-hint {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .deck-bridge-actions {
+        grid-column: 2;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .btn-deck {
+        color: #2a1700;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        border-color: transparent;
+        box-shadow: 0 10px 22px -12px #f59e0b;
+      }
+      .btn-deck:hover:not(:disabled) {
+        color: #2a1700;
+        background: linear-gradient(135deg, #fcd34d, #fbbf24);
+        border-color: transparent;
       }
       .priority-list {
         padding: 16px 18px;
@@ -1872,6 +1940,7 @@
         .report-toolbar,
         .export-option,
         .ecosystem-card,
+        .finish-bar,
         .toast {
           display: none !important;
         }
@@ -2183,12 +2252,16 @@
         margin: 19px auto 0;
         max-width: 515px;
         padding: 14px 16px;
-        border: 1px solid color-mix(in oklab, var(--accent) 25%, var(--border));
+        border: 1px solid color-mix(in oklab, var(--lesson-b) 34%, var(--border));
         border-radius: 17px;
-        background: linear-gradient(120deg, var(--glow), var(--surface2));
+        background: linear-gradient(
+          120deg,
+          color-mix(in oklab, var(--lesson-b) 13%, var(--surface)),
+          var(--surface2)
+        );
       }
       .lesson-preview-icon {
-        color: var(--accent);
+        color: var(--lesson-ink);
         flex: 0 0 26px;
         margin-top: 1px;
       }
@@ -2211,26 +2284,74 @@
         flex: 0 0 auto;
       }
       .btn-lesson {
-        color: var(--text);
-        background: linear-gradient(125deg, var(--glow), var(--surface2));
-        border-color: color-mix(in oklab, var(--accent) 50%, var(--border));
-        box-shadow: 0 5px 18px -12px var(--accent);
-        font-size: 12px;
-        min-height: 44px;
+        color: #fff;
+        gap: 9px;
+        min-height: 46px;
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--lesson-a), var(--lesson-b));
+        border-color: transparent;
+        box-shadow:
+          0 12px 26px -12px var(--lesson-b),
+          inset 0 1px 0 #ffffff33;
       }
       .btn-lesson svg {
-        color: var(--accent);
+        color: #fff;
       }
       .btn-lesson:hover:not(:disabled) {
-        background: var(--glow);
-        border-color: var(--accent);
+        background: linear-gradient(135deg, var(--lesson-a), var(--lesson-b));
+        border-color: transparent;
+        filter: brightness(1.1);
       }
       .finish-help {
         display: block;
         color: var(--muted);
-        font-size: 9px;
-        margin-top: 5px;
+        font-size: 10px;
+        margin-top: 6px;
         line-height: 1.8;
+      }
+      /* Second, contextual entry point just above the composer. */
+      .finish-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 10px 23px;
+        border-top: 1px solid color-mix(in oklab, var(--lesson-b) 30%, var(--border));
+        background: linear-gradient(
+          100deg,
+          color-mix(in oklab, var(--lesson-b) 12%, var(--surface)),
+          var(--surface) 70%
+        );
+      }
+      .finish-bar-copy {
+        min-width: 0;
+      }
+      .finish-bar-copy strong {
+        display: block;
+        font-size: 12.5px;
+        line-height: 1.7;
+      }
+      .finish-bar-copy span {
+        display: block;
+        font-size: 10.5px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .finish-bar .btn-lesson {
+        flex: 0 0 auto;
+        min-height: 42px;
+        font-size: 12.5px;
+      }
+      @media (min-width: 761px) {
+        .chat-panel:has(.finish-bar:not([hidden])) .messages {
+          height: min(calc(61svh - 62px), 560px);
+          min-height: 300px;
+        }
+        .chat-panel:has(.finish-bar:not([hidden])) .scroll-down {
+          bottom: 178px;
+        }
       }
       .empty-session {
         flex-direction: column;
@@ -2328,29 +2449,44 @@
         flex-shrink: 0;
         margin-top: 4px;
       }
+      /* Companion tools: a compact column under the scene panel, visible without scrolling. */
+      .workspace {
+        grid-template-rows: auto 1fr;
+        row-gap: 14px;
+      }
+      .scene-panel {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .chat-panel {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+      }
       .ecosystem-section {
-        max-width: 1320px;
-        padding: 0 28px;
-        margin: 26px auto 0;
+        grid-column: 1;
+        grid-row: 2;
+        min-width: 0;
       }
       .ecosystem-heading {
         color: var(--muted);
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 700;
-        margin-bottom: 12px;
+        line-height: 1.7;
+        margin: 0 4px 8px;
       }
       .project-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
       }
       .project-card {
-        display: flex;
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
         align-items: center;
-        gap: 15px;
-        padding: 20px;
+        gap: 11px;
+        padding: 10px 14px;
         border: 1px solid var(--borderstrong);
-        border-radius: 23px;
+        border-radius: 20px;
         color: var(--text);
         text-decoration: none;
         box-shadow: var(--shadow), var(--inner);
@@ -2384,8 +2520,8 @@
         content: "";
         position: absolute;
         inset-inline-start: 0;
-        top: 18px;
-        bottom: 18px;
+        top: 16px;
+        bottom: 16px;
         width: 3px;
         border-radius: 6px;
         background: var(--purple);
@@ -2402,11 +2538,10 @@
         background: #fff;
         color: #000;
         border: 1px solid #ffffff80;
-        width: 54px;
-        height: 54px;
-        padding: 9px;
-        border-radius: 17px;
-        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        padding: 7px;
+        border-radius: 13px;
         box-shadow: 0 6px 20px #0002;
       }
       .project-logo svg {
@@ -2418,30 +2553,44 @@
         min-width: 0;
       }
       .project-copy h3 {
-        font-size: 16px;
+        font-size: 13px;
         font-weight: 800;
-        line-height: 1.7;
+        line-height: 1.6;
       }
       .project-copy p {
-        font-size: 11px;
+        font-size: 10px;
         color: var(--muted);
-        line-height: 1.85;
-        margin-top: 4px;
+        line-height: 1.7;
+        margin-top: 1px;
       }
       .project-cta {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        margin-inline-start: auto;
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--surface);
         color: var(--accent);
-        font-size: 10px;
-        font-weight: 700;
+        transition:
+          background 0.18s,
+          border-color 0.18s;
+      }
+      .project-cta > span:first-child {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
         white-space: nowrap;
-        flex-shrink: 0;
       }
       .project-cta svg {
-        width: 15px;
-        height: 15px;
+        width: 14px;
+        height: 14px;
+      }
+      .project-card:hover .project-cta {
+        background: var(--glow);
+        border-color: var(--accent);
       }
       .creator-footer {
         max-width: 1120px;
@@ -2491,16 +2640,17 @@
         font-size: 10px;
         line-height: 1.9;
       }
-      @media (max-width: 1050px) {
-        .ecosystem-section {
-          padding-inline: 20px;
-        }
+      @media (min-width: 761px) and (max-width: 1050px) {
         .project-card {
-          gap: 12px;
-          padding: 18px;
+          grid-template-columns: 36px minmax(0, 1fr) auto;
+          gap: 10px;
+          padding: 10px 12px;
         }
-        .project-cta > span:first-child {
-          display: none;
+        .project-logo {
+          width: 36px;
+          height: 36px;
+          padding: 6px;
+          border-radius: 12px;
         }
       }
       @media (max-width: 760px) {
@@ -2609,21 +2759,21 @@
           font-size: 11px;
         }
         .ecosystem-section {
-          padding-inline: 14px;
-          margin-top: 23px;
+          order: 3;
+          width: 100%;
         }
-        .project-grid {
-          grid-template-columns: 1fr;
-          gap: 12px;
-        }
-        .project-card {
+        .ecosystem-card {
           padding: 17px;
+          margin-top: 16px;
         }
-        .project-copy h3 {
-          font-size: 15px;
+        .deck-bridge-actions {
+          grid-column: 1 / -1;
         }
-        .project-cta > span:first-child {
-          display: inline;
+        .deck-bridge-actions .btn {
+          flex: 1 1 100%;
+        }
+        .finish-bar {
+          display: none;
         }
         .creator-card {
           align-items: flex-start;
@@ -2652,18 +2802,6 @@
         }
         .social-btn {
           justify-content: center;
-        }
-        .project-card {
-          gap: 12px;
-        }
-        .project-logo {
-          width: 47px;
-          height: 47px;
-          padding: 8px;
-          border-radius: 15px;
-        }
-        .project-cta > span:first-child {
-          display: none;
         }
         .starter-choice > span {
           font-size: 10px;
@@ -3062,6 +3200,16 @@
             hidden
             data-icon="down"
           ></button>
+          <div id="finish-bar" class="finish-bar" hidden>
+            <div class="finish-bar-copy">
+              <strong data-i18n="finishBarTitle"></strong>
+              <span data-i18n="finishHelp"></span>
+            </div>
+            <button id="finish-btn-bottom" class="btn btn-lesson" type="button">
+              <span data-icon="vocabulary"></span
+              ><span data-i18n="finish"></span>
+            </button>
+          </div>
           <form id="composer" class="composer">
             <label
               for="message-input"
@@ -3132,115 +3280,114 @@
           <div id="report-content"></div>
         </div>
       </section>
+      <section class="ecosystem-section" aria-labelledby="ecosystem-heading">
+        <h2
+          id="ecosystem-heading"
+          class="ecosystem-heading"
+          data-i18n="ecosystemHeading"
+        ></h2>
+        <div class="project-grid">
+          <a
+            id="project-deck"
+            class="project-card project-deck"
+            href="https://mr-qaderi.github.io/Vocabulary-Learner/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="project-logo" aria-hidden="true"
+              ><svg
+                viewBox="0 0 64 64"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13 14h16c7.7 0 13 4.3 15 10.3C46 18.3 51.3 14 59 14h-8.5C43.6 14 38 19.6 38 26.5V50l-7-5.5H13a6 6 0 0 1-6-6V20a6 6 0 0 1 6-6Z"
+                  stroke="currentColor"
+                  stroke-width="4"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M17 25h15M17 32h15M17 39h10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                  stroke-linecap="round"
+                />
+                <circle cx="47" cy="31" r="3.5" fill="currentColor" />
+                <circle cx="54" cy="24" r="2.7" fill="currentColor" />
+                <circle cx="56" cy="38" r="2.7" fill="currentColor" />
+                <path
+                  d="M49.5 28.7 52.5 25.5M50.5 32h4"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                /></svg
+            ></span>
+            <div class="project-copy">
+              <h3 data-i18n="projectDeckName"></h3>
+              <p data-i18n="deckPromoDescription"></p>
+            </div>
+            <span class="project-cta"
+              ><span data-i18n="openProject"></span
+              ><span data-icon="external"></span
+            ></span>
+          </a>
+          <a
+            id="project-pen"
+            class="project-card project-pen"
+            href="https://mr-qaderi.github.io/LingoPen/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="project-logo" aria-hidden="true"
+              ><svg
+                viewBox="0 0 64 64"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M42.5 13.5l8 8-25.5 25.5-10.5 3 3-10.5 25-26z"
+                  stroke="currentColor"
+                  stroke-width="4.4"
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M37.6 18.4l8 8"
+                  stroke="currentColor"
+                  stroke-width="4.4"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M13.5 52h37"
+                  stroke="currentColor"
+                  stroke-width="4.4"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M17.5 41.5l5 5"
+                  stroke="currentColor"
+                  stroke-width="3.2"
+                  stroke-linecap="round"
+                  opacity=".7"
+                />
+                <path
+                  d="M52 10l1.5-3 1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5Z"
+                  fill="currentColor"
+                  opacity=".9"
+                /></svg
+            ></span>
+            <div class="project-copy">
+              <h3 data-i18n="projectPenName"></h3>
+              <p data-i18n="penPromoDescription"></p>
+            </div>
+            <span class="project-cta"
+              ><span data-i18n="openProject"></span
+              ><span data-icon="external"></span
+            ></span>
+          </a>
+        </div>
+      </section>
     </main>
-    <section class="ecosystem-section" aria-labelledby="ecosystem-heading">
-      <h2
-        id="ecosystem-heading"
-        class="ecosystem-heading"
-        data-i18n="ecosystemHeading"
-      ></h2>
-      <div class="project-grid">
-        <a
-          id="project-deck"
-          class="project-card project-deck"
-          href="https://mr-qaderi.github.io/Vocabulary-Learner/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="project-logo" aria-hidden="true"
-            ><svg
-              viewBox="0 0 64 64"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M13 14h16c7.7 0 13 4.3 15 10.3C46 18.3 51.3 14 59 14h-8.5C43.6 14 38 19.6 38 26.5V50l-7-5.5H13a6 6 0 0 1-6-6V20a6 6 0 0 1 6-6Z"
-                stroke="currentColor"
-                stroke-width="4"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M17 25h15M17 32h15M17 39h10"
-                stroke="currentColor"
-                stroke-width="4"
-                stroke-linecap="round"
-              />
-              <circle cx="47" cy="31" r="3.5" fill="currentColor" />
-              <circle cx="54" cy="24" r="2.7" fill="currentColor" />
-              <circle cx="56" cy="38" r="2.7" fill="currentColor" />
-              <path
-                d="M49.5 28.7 52.5 25.5M50.5 32h4"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-              /></svg
-          ></span>
-          <div class="project-copy">
-            <h3 data-i18n="projectDeckName"></h3>
-            <p data-i18n="deckPromoDescription"></p>
-          </div>
-          <span class="project-cta"
-            ><span data-i18n="openProject"></span
-            ><span data-icon="external"></span
-          ></span>
-        </a>
-        <a
-          id="project-pen"
-          class="project-card project-pen"
-          href="https://mr-qaderi.github.io/LingoPen/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="project-logo" aria-hidden="true"
-            ><svg
-              viewBox="0 0 64 64"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M42.5 13.5l8 8-25.5 25.5-10.5 3 3-10.5 25-26z"
-                stroke="currentColor"
-                stroke-width="4.4"
-                stroke-linejoin="round"
-                stroke-linecap="round"
-              />
-              <path
-                d="M37.6 18.4l8 8"
-                stroke="currentColor"
-                stroke-width="4.4"
-                stroke-linecap="round"
-              />
-              <path
-                d="M13.5 52h37"
-                stroke="currentColor"
-                stroke-width="4.4"
-                stroke-linecap="round"
-              />
-              <path
-                d="M17.5 41.5l5 5"
-                stroke="currentColor"
-                stroke-width="3.2"
-                stroke-linecap="round"
-                opacity=".7"
-              />
-              <path
-                d="M52 10l1.5-3 1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5Z"
-                fill="currentColor"
-                opacity=".9"
-              /></svg
-          ></span>
-          <div class="project-copy">
-            <h3 data-i18n="projectPenName"></h3>
-            <p data-i18n="penPromoDescription"></p>
-          </div>
-          <span class="project-cta"
-            ><span data-i18n="openProject"></span
-            ><span data-icon="external"></span
-          ></span>
-        </a>
-      </div>
-    </section>
-
     <footer class="creator-footer">
       <div class="creator-card">
         <div class="creator-id">
@@ -3341,6 +3488,8 @@
         const PROXY_URL = "https://language-learner.qaderi.workers.dev/";
         const DECK_URL = "https://mr-qaderi.github.io/Vocabulary-Learner/";
         const PEN_URL = "https://mr-qaderi.github.io/LingoPen/";
+        const DECK_LOGO =
+          '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 14h16c7.7 0 13 4.3 15 10.3C46 18.3 51.3 14 59 14h-8.5C43.6 14 38 19.6 38 26.5V50l-7-5.5H13a6 6 0 0 1-6-6V20a6 6 0 0 1 6-6Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M17 25h15M17 32h15M17 39h10" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="47" cy="31" r="3.5" fill="currentColor"/><circle cx="54" cy="24" r="2.7" fill="currentColor"/><circle cx="56" cy="38" r="2.7" fill="currentColor"/><path d="M49.5 28.7 52.5 25.5M50.5 32h4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
         const REQUEST_TIMEOUT = 120000;
         const MAX_MESSAGE = 4000;
         const MAX_SESSION_CHARS = 120000;
@@ -4820,6 +4969,11 @@
             penPromoDescription:
               "متنت را اصلاح کن، طبیعی‌تر بنویس و از نکته‌های نگارشی یاد بگیر.",
             openProject: "باز کردن",
+            finishBarTitle: "هر وقت آماده بودی، درس این گفت‌وگو را بگیر",
+            deckBridgeTitle: "واژه‌های این درس را در LingoDeck تمرین کن",
+            deckBridgeText: "LingoDeck (زبان‌یار) ابزار تخصصی ما برای تمرین لغت و اصطلاح است؛ هر واژه را با معنی، مثال، گرامر و تلفظ یاد می‌گیری.",
+            deckBridgeHint: "واژه‌های بالا را کپی کن، آنجا بگذار و تمرین‌شان کن.",
+            deckBridgeOpen: "باز کردن LingoDeck",
             saveLessonTitle: "درس مکالمه‌ات را نگه دار.",
             saveLessonDescription:
               "گزارش آموزشی را به صورت فایل Word قابل‌ویرایش دریافت کن.",
@@ -4852,6 +5006,11 @@
             penPromoDescription:
               "Correct your writing, sound more natural and learn from writing feedback.",
             openProject: "Open",
+            finishBarTitle: "Whenever you’re ready, get your lesson from this chat",
+            deckBridgeTitle: "Practise this lesson’s words in LingoDeck",
+            deckBridgeText: "LingoDeck is our dedicated tool for practising vocabulary and expressions, with meanings, examples, grammar and pronunciation.",
+            deckBridgeHint: "Copy the words above, paste them there and start practising.",
+            deckBridgeOpen: "Open LingoDeck",
             saveLessonTitle: "Keep your conversation lesson.",
             saveLessonDescription:
               "Download your learning report as an editable Word file.",
@@ -4885,6 +5044,11 @@
             penPromoDescription:
               "Verbessere deine Texte, schreibe natürlicher und lerne aus Schreibfeedback.",
             openProject: "Öffnen",
+            finishBarTitle: "Wenn du bereit bist, hol dir die Lektion aus diesem Gespräch",
+            deckBridgeTitle: "Übe die Wörter dieser Lektion in LingoDeck",
+            deckBridgeText: "LingoDeck ist unser spezielles Werkzeug zum Üben von Wortschatz und Ausdrücken – mit Bedeutungen, Beispielen, Grammatik und Aussprache.",
+            deckBridgeHint: "Kopiere die Wörter oben, füge sie dort ein und übe sie.",
+            deckBridgeOpen: "LingoDeck öffnen",
             saveLessonTitle: "Bewahre deine Gesprächslektion auf.",
             saveLessonDescription:
               "Lade deinen Lernbericht als bearbeitbare Word-Datei herunter.",
@@ -4918,6 +5082,11 @@
             penPromoDescription:
               "Corrigez vos textes, écrivez plus naturellement et apprenez grâce aux conseils de rédaction.",
             openProject: "Ouvrir",
+            finishBarTitle: "Quand vous voulez, obtenez la leçon de cette conversation",
+            deckBridgeTitle: "Travaillez les mots de cette leçon dans LingoDeck",
+            deckBridgeText: "LingoDeck est notre outil dédié à l’entraînement du vocabulaire et des expressions, avec sens, exemples, grammaire et prononciation.",
+            deckBridgeHint: "Copiez les mots ci-dessus, collez-les-y et entraînez-vous.",
+            deckBridgeOpen: "Ouvrir LingoDeck",
             saveLessonTitle: "Conservez votre leçon de conversation.",
             saveLessonDescription:
               "Téléchargez votre bilan pédagogique dans un fichier Word modifiable.",
@@ -4952,6 +5121,11 @@
             penPromoDescription:
               "Corrige tus textos, escribe de forma más natural y aprende con comentarios de escritura.",
             openProject: "Abrir",
+            finishBarTitle: "Cuando quieras, consigue la lección de esta conversación",
+            deckBridgeTitle: "Practica en LingoDeck las palabras de esta lección",
+            deckBridgeText: "LingoDeck es nuestra herramienta especializada para practicar vocabulario y expresiones, con significados, ejemplos, gramática y pronunciación.",
+            deckBridgeHint: "Copia las palabras de arriba, pégalas allí y practícalas.",
+            deckBridgeOpen: "Abrir LingoDeck",
             saveLessonTitle: "Guarda tu lección de conversación.",
             saveLessonDescription:
               "Descarga tu informe de aprendizaje como archivo Word editable.",
@@ -4980,6 +5154,11 @@
             deckPromoDescription: "通过释义、例句、语法和发音学习词汇与表达。",
             penPromoDescription: "修改文章，让表达更自然，并从写作反馈中学习。",
             openProject: "打开",
+            finishBarTitle: "准备好了，就来获取这次对话的课程",
+            deckBridgeTitle: "用 LingoDeck 练习本课的词汇",
+            deckBridgeText: "LingoDeck 是我们专门用于练习词汇和表达的工具，提供释义、例句、语法和发音。",
+            deckBridgeHint: "复制上方的词汇，粘贴到那里开始练习。",
+            deckBridgeOpen: "打开 LingoDeck",
             saveLessonTitle: "保存你的对话课程。",
             saveLessonDescription: "将学习报告下载为可编辑的 Word 文件。",
             privacy: "关闭或刷新此页面会清除对话和报告。",
@@ -5010,6 +5189,11 @@
             penPromoDescription:
               "Metnini düzelt, daha doğal yaz ve yazma geri bildirimlerinden öğren.",
             openProject: "Aç",
+            finishBarTitle: "Hazır olduğunda bu sohbetin dersini al",
+            deckBridgeTitle: "Bu dersin kelimelerini LingoDeck’te çalış",
+            deckBridgeText: "LingoDeck, kelime ve ifadeleri anlam, örnek, dilbilgisi ve telaffuzla çalışman için geliştirdiğimiz özel aracımızdır.",
+            deckBridgeHint: "Yukarıdaki kelimeleri kopyala, oraya yapıştır ve çalışmaya başla.",
+            deckBridgeOpen: "LingoDeck’i aç",
             saveLessonTitle: "Sohbet dersini sakla.",
             saveLessonDescription:
               "Öğrenme raporunu düzenlenebilir bir Word dosyası olarak indir.",
@@ -5044,6 +5228,11 @@
             penPromoDescription:
               "Correggi i tuoi testi, scrivi in modo più naturale e impara dai consigli di scrittura.",
             openProject: "Apri",
+            finishBarTitle: "Quando sei pronto, ricevi la lezione di questa conversazione",
+            deckBridgeTitle: "Esercita le parole di questa lezione in LingoDeck",
+            deckBridgeText: "LingoDeck è il nostro strumento dedicato per esercitare vocabolario ed espressioni, con significati, esempi, grammatica e pronuncia.",
+            deckBridgeHint: "Copia le parole qui sopra, incollale lì e inizia a esercitarti.",
+            deckBridgeOpen: "Apri LingoDeck",
             saveLessonTitle: "Conserva la tua lezione di conversazione.",
             saveLessonDescription:
               "Scarica il rapporto di apprendimento come file Word modificabile.",
@@ -5077,6 +5266,11 @@
             penPromoDescription:
               "Исправляй тексты, пиши естественнее и учись по советам о письме.",
             openProject: "Открыть",
+            finishBarTitle: "Когда будешь готов, получи урок по этому диалогу",
+            deckBridgeTitle: "Тренируй слова из этого урока в LingoDeck",
+            deckBridgeText: "LingoDeck — наш специальный инструмент для тренировки слов и выражений: значения, примеры, грамматика и произношение.",
+            deckBridgeHint: "Скопируй слова выше, вставь их там и начни тренироваться.",
+            deckBridgeOpen: "Открыть LingoDeck",
             saveLessonTitle: "Сохрани свой урок по диалогу.",
             saveLessonDescription:
               "Скачай учебный отчёт в виде редактируемого файла Word.",
@@ -5749,6 +5943,9 @@
           $("lesson-action").hidden = setup || ended;
           $("finish-btn").disabled = state.inflight || !!state.pending;
           $("finish-btn").title = t("finishHelp");
+          $("finish-bar").hidden =
+            state.phase !== "chat" || !learnerTurns().length;
+          $("finish-btn-bottom").disabled = state.inflight || !!state.pending;
           $("settings-fields").disabled = !setup;
           $("starter-options").disabled = !setup;
           $("start-btn").hidden = !setup;
@@ -6849,18 +7046,31 @@
           if (!r.vocabulary.length)
             list.append(node("p", "muted small", t("noVocabulary")));
           root.append(list);
-          const deck = node("a", "ecosystem-card");
-          deck.href = DECK_URL;
-          deck.target = "_blank";
-          deck.rel = "noopener noreferrer";
-          const text = node("div");
-          text.append(
-            node("strong", "", t("deckTitle")),
-            node("p", "", t("deckDescription")),
-          );
-          const arrow = node("span");
-          arrow.innerHTML = icon("external");
-          deck.append(text, arrow);
+          const deck = node("section", "ecosystem-card"),
+            deckLogo = node("span", "deck-bridge-logo"),
+            deckCopy = node("div", "deck-bridge-copy"),
+            deckHeading = node("h3", "", t("deckBridgeTitle")),
+            deckActions = node("div", "deck-bridge-actions");
+          deck.setAttribute("aria-labelledby", "deck-bridge-title");
+          deckHeading.id = "deck-bridge-title";
+          deckLogo.setAttribute("aria-hidden", "true");
+          deckLogo.innerHTML = DECK_LOGO;
+          deckCopy.append(deckHeading, node("p", "", t("deckBridgeText")));
+          if (r.vocabulary.length) {
+            deckCopy.append(node("p", "deck-bridge-hint", t("deckBridgeHint")));
+            deckActions.append(
+              makeButton(t("copyVocabulary"), "copy", copyVocabulary),
+            );
+          }
+          const deckLink = node("a", "btn btn-deck"),
+            deckLinkIcon = node("span");
+          deckLink.href = DECK_URL;
+          deckLink.target = "_blank";
+          deckLink.rel = "noopener noreferrer";
+          deckLinkIcon.innerHTML = icon("external");
+          deckLink.append(deckLinkIcon, node("span", "", t("deckBridgeOpen")));
+          deckActions.append(deckLink);
+          deck.append(deckLogo, deckCopy, deckActions);
           root.append(deck);
           if (r.priorities.length) {
             const block = node("section", "priority-list");
@@ -7228,6 +7438,7 @@
             }
           });
           $("finish-btn").addEventListener("click", finishSession);
+          $("finish-btn-bottom").addEventListener("click", finishSession);
           $("retry-request").addEventListener("click", executePending);
           $("discard-pending").addEventListener("click", editPending);
           $("continue-after-error").addEventListener("click", returnToChat);
