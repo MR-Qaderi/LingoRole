@@ -9,7 +9,7 @@
     <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="LingoRole — text-based language practice, roleplay and personal learning feedback. گپ‌یار: تمرین مکالمه و نقش‌آفرینی با گزارش آموزشی."
+      content="LingoRole — language roleplay with text or voice input and personal learning feedback. گپ‌یار: تمرین مکالمه با تایپ یا صدا، نقش‌آفرینی و گزارش آموزشی."
     />
     <title>LingoRole | گپ‌یار</title>
     <link id="favicon" rel="icon" type="image/svg+xml" />
@@ -20,7 +20,7 @@
       rel="stylesheet"
     />
     <style>
-      /* LingoRole 1.5 — self-contained styles; external font is optional. */
+      /* LingoRole — self-contained styles; external font is optional. */
       :root {
         color-scheme: light;
         --bg: #f3f5f9;
@@ -3874,8 +3874,42 @@
       .voice-btn[data-voice="recording"] svg { animation: voice-pulse 1.1s ease-in-out infinite; }
       @keyframes voice-pulse { 50% { transform: scale(.84); opacity: .7; } }
       .voice-btn:disabled { opacity: .48; cursor: not-allowed; }
-      .message-listen[data-speaking="true"] { opacity: 1; color: var(--accent); }
+      .message-listen { opacity: .82; color: var(--muted); }
+      .message-listen:hover,
+      .message-listen:focus-visible,
+      .message-listen[data-speaking="true"] {
+        opacity: 1;
+        color: var(--accent);
+        background: var(--glow);
+      }
+      .message-listen:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
       .message-listen svg { width: 15px; height: 15px; }
+      .composer-foot { flex-wrap: wrap; min-height: 22px; }
+      .composer-lesson-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 22px;
+        padding: 1px 7px;
+        border: 0;
+        border-radius: 7px;
+        background: var(--glow);
+        color: var(--accent);
+        font: inherit;
+        font-size: 10.5px;
+        font-weight: 700;
+        line-height: 18px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+      .composer-lesson-action svg { display: block; width: 13px; height: 13px; }
+      .composer-lesson-action:hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--accent); }
+      .composer-lesson-action:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .composer-lesson-action:disabled { opacity: .5; cursor: not-allowed; }
+      .composer-foot .keyboard-hint { margin-inline-start: auto; }
+      .composer-foot #character-count { margin-inline-start: auto; white-space: nowrap; }
+      .composer-foot:has(.keyboard-hint:not([hidden])) #character-count { margin-inline-start: 0; }
       .voice-note { color: var(--accent); font-size: 11px; line-height: 1.5; }
       .voice-note[data-error="true"] { color: #c74b52; }
       .voice-retry {
@@ -3904,7 +3938,8 @@
         text-align: start;
       }
       body[data-phase="chat"] .composer-foot:has(.voice-note:not([hidden])) .keyboard-hint { display: none; }
-      body[data-phase="chat"] .composer-foot:has(.voice-note:not([hidden])) { justify-content: flex-start; flex-wrap: wrap; }
+      body[data-phase="chat"] .composer-foot:has(.voice-note:not([hidden])) { justify-content: flex-start; }
+      body[data-phase="chat"] .composer-foot:has(.voice-note:not([hidden])) .voice-note { flex: 1 1 150px; }
       body[data-phase="chat"] .composer-foot:has(.voice-note:not([hidden])) #character-count { margin-inline-start: auto; }
       @media (max-width: 370px) {
         .voice-btn { width: 34px; height: 36px; flex-basis: 34px; }
@@ -4312,16 +4347,6 @@
           <button id="scroll-down" class="scroll-down" type="button" hidden>
             <span data-icon="down"></span><span id="scroll-down-label"></span>
           </button>
-          <div id="finish-bar" class="finish-bar" hidden>
-            <div class="finish-bar-copy">
-              <strong data-i18n="finishBarTitle"></strong>
-              <span data-i18n="finishHelp"></span>
-            </div>
-            <button id="finish-btn-bottom" class="btn btn-lesson" type="button">
-              <span data-icon="vocabulary"></span
-              ><span data-i18n="finish"></span>
-            </button>
-          </div>
           <form id="composer" class="composer">
             <label
               for="message-input"
@@ -4351,6 +4376,9 @@
               ></button>
             </div>
             <div class="composer-foot">
+              <button id="finish-btn-bottom" class="composer-lesson-action" type="button" hidden>
+                <span data-icon="vocabulary"></span><span data-i18n="finish"></span>
+              </button>
               <span
                 id="composer-help"
                 class="keyboard-hint"
@@ -4606,7 +4634,7 @@
     </dialog>
     <div id="toast" class="toast" role="status" hidden></div>
     <script>
-      /* LingoRole | گپ‌یار — v1.9.1 voice fix. No credentials or persistence of chat. */
+      /* LingoRole | گپ‌یار — v1.9.2 voice polish. No credentials or persistence of chat. */
 (() => {
   "use strict";
   const PROXY_URL = "https://language-learner.qaderi.workers.dev/";
@@ -6062,19 +6090,17 @@
     STRINGS[code] = { ...STRINGS.en, ...LOCALIZED[code] };
   const EXPERIENCE_STRINGS = {
     fa: {
-      headerSubtitle: "تمرین مکالمه، نقش‌آفرینی و یادگیری از گفت‌وگوی خودت",
+      headerSubtitle: "تمرین مکالمه با تایپ یا صدا؛ یادگیری از گفت‌وگوی خودت",
       starterTitle: "چه کسی شروع کند؟",
       starterUser: "من شروع می‌کنم",
       starterAI: "طرف مقابل",
       readyTitle: "صحنه آماده است؛ نوبت توست.",
-      readyDescription:
-        "اولین پیامت را بنویس، یا بگذار طرف مقابل مکالمه را شروع کند.",
+      readyDescription: "اولین پیامت را بنویس یا ضبط کن، یا بگذار طرف مقابل شروع کند.",
       partnerStarts: "طرف مقابل شروع کند",
       finish: "پایان و دریافت درس",
       finishHelp: "نکته‌های گرامر، واژه و بیان + فایل Word",
       lessonTitle: "آخر هر گفت‌وگو، یک درس برای تو",
-      lessonDescription:
-        "«پایان و دریافت درس» را بزن؛ نقاط قوت، اصلاح جمله‌ها و واژه‌های کاربردی را متناسب با سطح خودت بگیر.",
+      lessonDescription: "«پایان و دریافت درس» را بزن؛ هوش مصنوعی از متن پیام‌هایت، نکته‌های گرامر، واژه و بیان را متناسب با سطح خودت آماده می‌کند.",
       ecosystemHeading: "با ابزارهای دیگر ما، یادگیری را ادامه بده",
       projectDeckName: "زبان‌یار | LingoDeck",
       projectPenName: "قلم‌یار | LingoPen",
@@ -6094,25 +6120,21 @@
         "گزارش آموزشی را به صورت فایل Word قابل‌ویرایش دریافت کن.",
       privacy:
         "با بستن یا بازخوانی صفحه، مکالمه و گزارش از دسترس خارج می‌شوند.",
-      welcomeDescription:
-        "در یک موقعیت واقعی یا دنیایی که خودت می‌سازی، با نقش و سطح دلخواهت چت کن.",
+      welcomeDescription: "موقعیت و نقش دلخواهت را انتخاب کن؛ تایپ کن یا صدایت را با هوش مصنوعی به متن تبدیل کن و بفرست.",
       reportTitle: "درس مکالمهٔ تو",
     },
     en: {
-      headerSubtitle:
-        "Roleplay, practise conversation and learn from your own words",
+      headerSubtitle: "Roleplay with text or voice. Learn from your own conversation.",
       starterTitle: "Who starts?",
       starterUser: "I start",
       starterAI: "My partner",
       readyTitle: "Your scene is ready. Your turn.",
-      readyDescription:
-        "Write your first message, or let your partner open the conversation.",
+      readyDescription: "Type or record your first message, or let your partner start.",
       partnerStarts: "Let my partner start",
       finish: "Finish & learn",
       finishHelp: "Grammar, vocabulary and expression tips + Word file",
       lessonTitle: "Every conversation becomes your own lesson",
-      lessonDescription:
-        "Choose “Finish & learn” for strengths, sentence corrections and useful expressions matched to your level.",
+      lessonDescription: "Choose “Finish & learn” for AI feedback on your sent messages: strengths, corrections and expressions matched to your level.",
       ecosystemHeading: "Keep learning with our other tools",
       projectDeckName: "LingoDeck",
       projectPenName: "LingoPen",
@@ -6133,25 +6155,21 @@
         "Download your learning report as an editable Word file.",
       privacy:
         "Closing or reloading this page clears the conversation and report.",
-      welcomeDescription:
-        "Chat in a real situation or a world you create, with your own role and level.",
+      welcomeDescription: "Choose your scene and role. Type, or let AI turn your speech into text; review it and send.",
       reportTitle: "Your conversation lesson",
     },
     de: {
-      headerSubtitle:
-        "Rollenspiele, Gespräche üben und aus eigenen Worten lernen",
+      headerSubtitle: "Rollenspiele mit Text oder Stimme. Lerne aus deinem Gespräch.",
       starterTitle: "Wer beginnt?",
       starterUser: "Ich beginne",
       starterAI: "Mein Gegenüber",
       readyTitle: "Die Szene ist bereit. Du bist dran.",
-      readyDescription:
-        "Schreibe deine erste Nachricht oder lass dein Gegenüber beginnen.",
+      readyDescription: "Schreibe oder sprich deine erste Nachricht, oder lass dein Gegenüber beginnen.",
       partnerStarts: "Mein Gegenüber beginnt",
       finish: "Beenden & lernen",
       finishHelp: "Tipps zu Grammatik, Wortschatz und Ausdruck + Word-Datei",
       lessonTitle: "Jedes Gespräch wird zu deiner eigenen Lektion",
-      lessonDescription:
-        "Mit „Beenden & lernen“ erhältst du Stärken, Satzkorrekturen und nützliche Wendungen passend zu deinem Niveau.",
+      lessonDescription: "Mit „Beenden & lernen“ erhältst du KI-Feedback zu deinen gesendeten Nachrichten: Stärken, Korrekturen und passende Wendungen.",
       ecosystemHeading: "Lerne mit unseren anderen Werkzeugen weiter",
       projectDeckName: "LingoDeck",
       projectPenName: "LingoPen",
@@ -6172,26 +6190,22 @@
         "Lade deinen Lernbericht als bearbeitbare Word-Datei herunter.",
       privacy:
         "Beim Schließen oder Neuladen dieser Seite werden Gespräch und Bericht gelöscht.",
-      welcomeDescription:
-        "Übe in einer realen Situation oder deiner eigenen Welt mit einer Rolle und einem Niveau deiner Wahl.",
+      welcomeDescription: "Wähle Szene und Rolle. Tippe oder lass KI deine Sprache in Text umwandeln; prüfe ihn und sende ihn.",
       reportTitle: "Deine Gesprächslektion",
     },
     fr: {
-      headerSubtitle:
-        "Jeux de rôle, pratique écrite et apprentissage à partir de vos mots",
+      headerSubtitle: "Jeu de rôle par texte ou voix. Apprenez de votre conversation.",
       starterTitle: "Qui commence ?",
       starterUser: "Je commence",
       starterAI: "Mon partenaire",
       readyTitle: "La scène est prête. À vous de jouer.",
-      readyDescription:
-        "Écrivez votre premier message ou laissez votre partenaire commencer.",
+      readyDescription: "Écrivez ou enregistrez votre premier message, ou laissez votre partenaire commencer.",
       partnerStarts: "Laisser mon partenaire commencer",
       finish: "Terminer et apprendre",
       finishHelp:
         "Conseils de grammaire, vocabulaire et expression + fichier Word",
       lessonTitle: "Chaque conversation devient votre leçon",
-      lessonDescription:
-        "Choisissez « Terminer et apprendre » pour découvrir vos points forts, des corrections et des expressions adaptées à votre niveau.",
+      lessonDescription: "Avec « Terminer et apprendre », l’IA analyse vos messages envoyés : points forts, corrections et expressions adaptées à votre niveau.",
       ecosystemHeading: "Continuez à apprendre avec nos autres outils",
       projectDeckName: "LingoDeck",
       projectPenName: "LingoPen",
@@ -6213,26 +6227,22 @@
         "Téléchargez votre bilan pédagogique dans un fichier Word modifiable.",
       privacy:
         "Fermer ou recharger cette page efface la conversation et le bilan.",
-      welcomeDescription:
-        "Échangez dans une situation réelle ou un univers imaginé, avec le rôle et le niveau de votre choix.",
+      welcomeDescription: "Choisissez votre scène et votre rôle. Écrivez ou laissez l’IA transcrire votre voix ; vérifiez le texte et envoyez-le.",
       reportTitle: "Votre leçon de conversation",
     },
     es: {
-      headerSubtitle:
-        "Juegos de rol, práctica escrita y aprendizaje con tus propias palabras",
+      headerSubtitle: "Practica roles por texto o voz. Aprende de tu conversación.",
       starterTitle: "¿Quién empieza?",
       starterUser: "Empiezo yo",
       starterAI: "Mi interlocutor",
       readyTitle: "Tu escena está lista. Te toca.",
-      readyDescription:
-        "Escribe tu primer mensaje o deja que tu interlocutor empiece.",
+      readyDescription: "Escribe o graba tu primer mensaje, o deja que tu compañero empiece.",
       partnerStarts: "Que empiece mi interlocutor",
       finish: "Terminar y aprender",
       finishHelp:
         "Consejos de gramática, vocabulario y expresión + archivo Word",
       lessonTitle: "Cada conversación se convierte en tu lección",
-      lessonDescription:
-        "Elige «Terminar y aprender» para descubrir tus puntos fuertes, correcciones y expresiones útiles adaptadas a tu nivel.",
+      lessonDescription: "Elige “Terminar y aprender” para que la IA analice tus mensajes enviados: fortalezas, correcciones y expresiones para tu nivel.",
       ecosystemHeading: "Sigue aprendiendo con nuestras otras herramientas",
       projectDeckName: "LingoDeck",
       projectPenName: "LingoPen",
@@ -6254,23 +6264,21 @@
         "Descarga tu informe de aprendizaje como archivo Word editable.",
       privacy:
         "Al cerrar o recargar esta página se borran la conversación y el informe.",
-      welcomeDescription:
-        "Conversa en una situación real o en un mundo que crees, con tu propio rol y nivel.",
+      welcomeDescription: "Elige tu escena y tu rol. Escribe o deja que la IA transcriba tu voz; revisa el texto y envíalo.",
       reportTitle: "Tu lección de conversación",
     },
     zh: {
-      headerSubtitle: "角色扮演、文字对话，从自己的表达中学习",
+      headerSubtitle: "用文字或语音练习角色对话，从自己的表达中学习",
       starterTitle: "谁先开始？",
       starterUser: "我先开始",
       starterAI: "对方先开始",
       readyTitle: "场景已准备好，轮到你了。",
-      readyDescription: "写下第一条消息，或让对方先开始对话。",
+      readyDescription: "输入或录制第一条消息，也可以让对方先开始。",
       partnerStarts: "让对方先开始",
       finish: "结束并获取学习报告",
       finishHelp: "语法、词汇和表达建议 + Word 文件",
       lessonTitle: "每次对话都成为你的专属课程",
-      lessonDescription:
-        "点击“结束并获取学习报告”，查看适合你水平的优点、句子修改和实用表达。",
+      lessonDescription: "选择“结束并学习”，AI 会根据你发送的文字，提供适合你水平的优点、修改建议和实用表达。",
       ecosystemHeading: "使用我们的其他工具继续学习",
       projectDeckName: "LingoDeck",
       projectPenName: "LingoPen",
@@ -6286,24 +6294,21 @@
       saveLessonTitle: "保存你的对话课程。",
       saveLessonDescription: "将学习报告下载为可编辑的 Word 文件。",
       privacy: "关闭或刷新此页面会清除对话和报告。",
-      welcomeDescription:
-        "在真实场景或你创造的世界中，按照你选择的角色和水平进行对话。",
+      welcomeDescription: "选择场景和角色。可以打字，也可以让 AI 将语音转成文字；检查或编辑后再发送。",
       reportTitle: "你的对话课程",
     },
     tr: {
-      headerSubtitle: "Rol yap, yazılı sohbet et ve kendi ifadelerinden öğren",
+      headerSubtitle: "Yazarak veya konuşarak rol yap, kendi sohbetinden öğren.",
       starterTitle: "Kim başlasın?",
       starterUser: "Ben başlayayım",
       starterAI: "Karşı taraf",
       readyTitle: "Sahnen hazır. Sıra sende.",
-      readyDescription:
-        "İlk mesajını yaz veya karşı tarafın sohbeti başlatmasına izin ver.",
+      readyDescription: "İlk mesajını yaz ya da kaydet veya karşı tarafın başlamasına izin ver.",
       partnerStarts: "Karşı taraf başlasın",
       finish: "Bitir ve öğren",
       finishHelp: "Dil bilgisi, kelime ve ifade önerileri + Word dosyası",
       lessonTitle: "Her sohbet sana özel bir derse dönüşür",
-      lessonDescription:
-        "Seviyene uygun güçlü yönler, cümle düzeltmeleri ve yararlı ifadeler için “Bitir ve öğren” seçeneğini kullan.",
+      lessonDescription: "“Bitir ve öğren” ile yapay zekâ gönderdiğin mesajları inceler: seviyene uygun güçlü yönler, düzeltmeler ve yararlı ifadeler.",
       ecosystemHeading: "Diğer araçlarımızla öğrenmeye devam et",
       projectDeckName: "LingoDeck",
       projectPenName: "LingoPen",
@@ -6323,25 +6328,21 @@
       saveLessonDescription:
         "Öğrenme raporunu düzenlenebilir bir Word dosyası olarak indir.",
       privacy: "Bu sayfayı kapatmak veya yenilemek sohbeti ve raporu siler.",
-      welcomeDescription:
-        "Gerçek bir durumda veya yarattığın bir dünyada, seçtiğin rol ve seviyede sohbet et.",
+      welcomeDescription: "Sahneni ve rolünü seç. Yaz veya yapay zekâ sesini metne çevirsin; kontrol edip gönder.",
       reportTitle: "Sohbet dersin",
     },
     it: {
-      headerSubtitle:
-        "Giochi di ruolo, conversazione scritta e apprendimento dalle tue parole",
+      headerSubtitle: "Giochi di ruolo con testo o voce. Impara dalla tua conversazione.",
       starterTitle: "Chi inizia?",
       starterUser: "Inizio io",
       starterAI: "Il mio interlocutore",
       readyTitle: "La scena è pronta. Tocca a te.",
-      readyDescription:
-        "Scrivi il primo messaggio o lascia che inizi il tuo interlocutore.",
+      readyDescription: "Scrivi o registra il primo messaggio, oppure lascia iniziare il tuo interlocutore.",
       partnerStarts: "Lascia iniziare il mio interlocutore",
       finish: "Termina e impara",
       finishHelp: "Consigli su grammatica, lessico ed espressione + file Word",
       lessonTitle: "Ogni conversazione diventa la tua lezione",
-      lessonDescription:
-        "Scegli “Termina e impara” per scoprire punti di forza, correzioni ed espressioni utili adatte al tuo livello.",
+      lessonDescription: "Con “Termina e impara”, l’IA analizza i messaggi inviati: punti di forza, correzioni ed espressioni adatte al tuo livello.",
       ecosystemHeading: "Continua a imparare con i nostri altri strumenti",
       projectDeckName: "LingoDeck",
       projectPenName: "LingoPen",
@@ -6363,25 +6364,21 @@
         "Scarica il rapporto di apprendimento come file Word modificabile.",
       privacy:
         "Chiudere o ricaricare questa pagina cancella la conversazione e il rapporto.",
-      welcomeDescription:
-        "Conversa in una situazione reale o in un mondo creato da te, con il ruolo e il livello che preferisci.",
+      welcomeDescription: "Scegli scena e ruolo. Scrivi o lascia che l’IA trascriva la tua voce; controlla il testo e invialo.",
       reportTitle: "La tua lezione di conversazione",
     },
     ru: {
-      headerSubtitle:
-        "Ролевые игры, письменный диалог и обучение на своих фразах",
+      headerSubtitle: "Ролевой диалог текстом или голосом. Учись на своих фразах.",
       starterTitle: "Кто начнёт?",
       starterUser: "Начну я",
       starterAI: "Мой собеседник",
       readyTitle: "Сцена готова. Твой ход.",
-      readyDescription:
-        "Напиши первое сообщение или позволь собеседнику начать диалог.",
+      readyDescription: "Напиши или запиши первое сообщение либо позволь собеседнику начать.",
       partnerStarts: "Пусть собеседник начнёт",
       finish: "Завершить и учиться",
       finishHelp: "Советы по грамматике, словам и выражениям + файл Word",
       lessonTitle: "Каждый диалог становится твоим уроком",
-      lessonDescription:
-        "Выбери «Завершить и учиться», чтобы увидеть сильные стороны, исправления и полезные выражения для твоего уровня.",
+      lessonDescription: "С «Завершить и учиться» ИИ анализирует отправленные сообщения: сильные стороны, исправления и выражения для твоего уровня.",
       ecosystemHeading: "Продолжай учиться с нашими другими инструментами",
       projectDeckName: "LingoDeck",
       projectPenName: "LingoPen",
@@ -6401,23 +6398,22 @@
       saveLessonDescription:
         "Скачай учебный отчёт в виде редактируемого файла Word.",
       privacy: "При закрытии или обновлении страницы диалог и отчёт удаляются.",
-      welcomeDescription:
-        "Общайся в реальной ситуации или придуманном мире с выбранной ролью и уровнем.",
+      welcomeDescription: "Выбери сцену и роль. Пиши или дай ИИ преобразовать речь в текст; проверь его и отправь.",
       reportTitle: "Твой урок по диалогу",
     },
   };
   for (const [code, strings] of Object.entries(EXPERIENCE_STRINGS))
     Object.assign(STRINGS[code], strings);
   const VOICE_STRINGS = {
-    fa: { voiceStart: "ضبط پیام صوتی", voiceStop: "پایان ضبط", voiceCancel: "لغو ضبط", voiceRecording: "در حال ضبط · {time} · برای پایان دوباره بزن", voiceTranscribing: "در حال تبدیل صدا به متن…", voiceReady: "متن آماده است؛ ویرایشش کن و بفرست.", voiceRetry: "تلاش دوباره", voiceUnsupported: "ضبط صدا در این مرورگر در دسترس نیست؛ می‌توانی تایپ کنی.", voicePermission: "دسترسی به میکروفن داده نشد. مجوز مرورگر را بررسی کن.", voiceNoSpeech: "گفتاری تشخیص داده نشد؛ دوباره ضبط کن.", voiceTooLarge: "این ضبط طولانی است؛ پیام کوتاه‌تری ضبط کن.", voiceQuota: "ظرفیت تبدیل صدا موقتاً پر شده؛ کمی بعد دوباره تلاش کن.", voiceNetwork: "ارتباط برای تبدیل صدا برقرار نشد. اینترنت یا VPN را بررسی کن.", voiceFailed: "تبدیل صدا به متن انجام نشد؛ دوباره تلاش کن.", voiceDraftFull: "متن پیام طولانی شده؛ بخشی را پاک کن و دوباره تلاش کن." },
-    en: { voiceStart: "Record a voice message", voiceStop: "Stop recording", voiceCancel: "Cancel recording", voiceRecording: "Recording · {time} · tap again to stop", voiceTranscribing: "Turning speech into text…", voiceReady: "Text is ready. Edit it, then send.", voiceRetry: "Try again", voiceUnsupported: "Recording is unavailable here. You can still type.", voicePermission: "Microphone permission was denied. Check your browser settings.", voiceNoSpeech: "No speech was recognized. Record again.", voiceTooLarge: "That recording is too long. Make a shorter one.", voiceQuota: "Voice transcription is temporarily at capacity. Try later.", voiceNetwork: "Cannot reach transcription. Check your connection or VPN.", voiceFailed: "Could not turn this recording into text. Try again.", voiceDraftFull: "The draft is too long. Remove some text and retry." },
-    de: { voiceStart: "Sprachnachricht aufnehmen", voiceStop: "Aufnahme beenden", voiceCancel: "Aufnahme abbrechen", voiceRecording: "Aufnahme · {time} · erneut tippen zum Beenden", voiceTranscribing: "Sprache wird in Text umgewandelt…", voiceReady: "Text bereit. Bearbeiten und senden.", voiceRetry: "Erneut versuchen", voiceUnsupported: "Aufnahme hier nicht verfügbar. Tippen ist weiterhin möglich.", voicePermission: "Mikrofonzugriff verweigert. Browserberechtigung prüfen.", voiceNoSpeech: "Keine Sprache erkannt. Erneut aufnehmen.", voiceTooLarge: "Aufnahme zu lang. Bitte kürzer aufnehmen.", voiceQuota: "Sprachdienst vorübergehend ausgelastet. Später versuchen.", voiceNetwork: "Sprachdienst nicht erreichbar. Verbindung oder VPN prüfen.", voiceFailed: "Umwandlung fehlgeschlagen. Erneut versuchen.", voiceDraftFull: "Entwurf zu lang. Text kürzen und erneut versuchen." },
-    fr: { voiceStart: "Enregistrer un message vocal", voiceStop: "Arrêter l'enregistrement", voiceCancel: "Annuler l'enregistrement", voiceRecording: "Enregistrement · {time} · touchez pour arrêter", voiceTranscribing: "Transcription en cours…", voiceReady: "Texte prêt. Modifiez-le puis envoyez.", voiceRetry: "Réessayer", voiceUnsupported: "Enregistrement indisponible. Vous pouvez écrire.", voicePermission: "Accès au micro refusé. Vérifiez le navigateur.", voiceNoSpeech: "Aucune parole reconnue. Réenregistrez.", voiceTooLarge: "Enregistrement trop long. Faites plus court.", voiceQuota: "Transcription temporairement saturée. Réessayez plus tard.", voiceNetwork: "Transcription inaccessible. Vérifiez la connexion ou le VPN.", voiceFailed: "Échec de la transcription. Réessayez.", voiceDraftFull: "Brouillon trop long. Raccourcissez-le puis réessayez." },
-    es: { voiceStart: "Grabar mensaje de voz", voiceStop: "Detener grabación", voiceCancel: "Cancelar grabación", voiceRecording: "Grabando · {time} · toca para terminar", voiceTranscribing: "Pasando voz a texto…", voiceReady: "Texto listo. Edítalo y envíalo.", voiceRetry: "Reintentar", voiceUnsupported: "No se puede grabar aquí. Aún puedes escribir.", voicePermission: "No hay permiso de micrófono. Revisa el navegador.", voiceNoSpeech: "No se detectó voz. Graba otra vez.", voiceTooLarge: "Grabación muy larga. Hazla más corta.", voiceQuota: "Transcripción temporalmente llena. Intenta más tarde.", voiceNetwork: "Sin conexión a transcripción. Revisa internet o VPN.", voiceFailed: "No se pudo transcribir. Reintenta.", voiceDraftFull: "El borrador es muy largo. Acórtalo y reintenta." },
-    zh: { voiceStart: "录制语音消息", voiceStop: "结束录音", voiceCancel: "取消录音", voiceRecording: "录音中 · {time} · 再点一次结束", voiceTranscribing: "正在转成文字…", voiceReady: "文字已就绪，编辑后发送。", voiceRetry: "重试", voiceUnsupported: "此浏览器无法录音，仍可打字。", voicePermission: "麦克风权限被拒绝，请检查浏览器设置。", voiceNoSpeech: "未识别到语音，请重新录制。", voiceTooLarge: "录音太长，请缩短。", voiceQuota: "语音转写服务暂时繁忙，请稍后重试。", voiceNetwork: "转写服务无法连接，请检查网络或 VPN。", voiceFailed: "转写失败，请重试。", voiceDraftFull: "草稿过长，请删减后重试。" },
-    tr: { voiceStart: "Sesli mesaj kaydet", voiceStop: "Kaydı bitir", voiceCancel: "Kaydı iptal et", voiceRecording: "Kaydediliyor · {time} · bitirmek için tekrar dokun", voiceTranscribing: "Ses yazıya çevriliyor…", voiceReady: "Metin hazır. Düzenleyip gönder.", voiceRetry: "Tekrar dene", voiceUnsupported: "Bu tarayıcıda kayıt yok. Yazabilirsin.", voicePermission: "Mikrofon izni reddedildi. Tarayıcı ayarlarını kontrol et.", voiceNoSpeech: "Konuşma algılanmadı. Yeniden kaydet.", voiceTooLarge: "Kayıt çok uzun. Daha kısa kaydet.", voiceQuota: "Ses hizmeti geçici olarak dolu. Sonra dene.", voiceNetwork: "Ses hizmetine bağlanılamadı. İnterneti veya VPN'i kontrol et.", voiceFailed: "Ses yazıya çevrilemedi. Tekrar dene.", voiceDraftFull: "Taslak çok uzun. Bir kısmını silip tekrar dene." },
-    it: { voiceStart: "Registra un messaggio vocale", voiceStop: "Termina registrazione", voiceCancel: "Annulla registrazione", voiceRecording: "Registrazione · {time} · tocca per fermare", voiceTranscribing: "Trascrizione in corso…", voiceReady: "Testo pronto. Modificalo e invia.", voiceRetry: "Riprova", voiceUnsupported: "Registrazione non disponibile. Puoi scrivere.", voicePermission: "Microfono non autorizzato. Controlla il browser.", voiceNoSpeech: "Nessuna voce riconosciuta. Registra di nuovo.", voiceTooLarge: "Registrazione troppo lunga. Accorciala.", voiceQuota: "Trascrizione temporaneamente occupata. Riprova più tardi.", voiceNetwork: "Trascrizione non raggiungibile. Controlla internet o VPN.", voiceFailed: "Trascrizione non riuscita. Riprova.", voiceDraftFull: "Bozza troppo lunga. Riducila e riprova." },
-    ru: { voiceStart: "Записать голосовое сообщение", voiceStop: "Остановить запись", voiceCancel: "Отменить запись", voiceRecording: "Запись · {time} · нажмите ещё раз для завершения", voiceTranscribing: "Преобразуем речь в текст…", voiceReady: "Текст готов. Исправьте и отправьте.", voiceRetry: "Повторить", voiceUnsupported: "Запись недоступна. Можно написать текст.", voicePermission: "Нет доступа к микрофону. Проверьте настройки браузера.", voiceNoSpeech: "Речь не распознана. Запишите снова.", voiceTooLarge: "Запись слишком длинная. Сделайте короче.", voiceQuota: "Сервис речи временно занят. Попробуйте позже.", voiceNetwork: "Нет связи с распознаванием. Проверьте интернет или VPN.", voiceFailed: "Не удалось распознать речь. Повторите.", voiceDraftFull: "Черновик слишком длинный. Сократите текст и повторите." },
+    fa: { voiceStart: "ضبط پیام صوتی", voiceStop: "پایان ضبط", voiceCancel: "لغو ضبط", voiceRecording: "در حال ضبط · {time} · برای پایان دوباره بزن", voiceTranscribing: "تبدیل صدا به متن با هوش مصنوعی…", voiceReady: "متن آماده است؛ بررسی و ویرایشش کن، سپس بفرست.", voiceRetry: "تلاش دوباره", voiceUnsupported: "ضبط صدا در این مرورگر در دسترس نیست؛ می‌توانی تایپ کنی.", voicePermission: "دسترسی به میکروفن داده نشد. مجوز مرورگر را بررسی کن.", voiceNoSpeech: "گفتاری تشخیص داده نشد؛ دوباره ضبط کن.", voiceTooLarge: "این ضبط طولانی است؛ پیام کوتاه‌تری ضبط کن.", voiceQuota: "ظرفیت تبدیل صدا موقتاً پر شده؛ کمی بعد دوباره تلاش کن.", voiceNetwork: "ارتباط برای تبدیل صدا برقرار نشد. اینترنت یا VPN را بررسی کن.", voiceFailed: "تبدیل صدا به متن انجام نشد؛ دوباره تلاش کن.", voiceDraftFull: "متن پیام طولانی شده؛ بخشی را پاک کن و دوباره تلاش کن." },
+    en: { voiceStart: "Record a voice message", voiceStop: "Stop recording", voiceCancel: "Cancel recording", voiceRecording: "Recording · {time} · tap again to stop", voiceTranscribing: "AI is transcribing your speech…", voiceReady: "Text is ready. Review or edit it, then send.", voiceRetry: "Try again", voiceUnsupported: "Recording is unavailable here. You can still type.", voicePermission: "Microphone permission was denied. Check your browser settings.", voiceNoSpeech: "No speech was recognized. Record again.", voiceTooLarge: "That recording is too long. Make a shorter one.", voiceQuota: "Voice transcription is temporarily at capacity. Try later.", voiceNetwork: "Cannot reach transcription. Check your connection or VPN.", voiceFailed: "Could not turn this recording into text. Try again.", voiceDraftFull: "The draft is too long. Remove some text and retry." },
+    de: { voiceStart: "Sprachnachricht aufnehmen", voiceStop: "Aufnahme beenden", voiceCancel: "Aufnahme abbrechen", voiceRecording: "Aufnahme · {time} · erneut tippen zum Beenden", voiceTranscribing: "KI wandelt deine Sprache in Text um…", voiceReady: "Text bereit. Prüfen oder bearbeiten, dann senden.", voiceRetry: "Erneut versuchen", voiceUnsupported: "Aufnahme hier nicht verfügbar. Tippen ist weiterhin möglich.", voicePermission: "Mikrofonzugriff verweigert. Browserberechtigung prüfen.", voiceNoSpeech: "Keine Sprache erkannt. Erneut aufnehmen.", voiceTooLarge: "Aufnahme zu lang. Bitte kürzer aufnehmen.", voiceQuota: "Sprachdienst vorübergehend ausgelastet. Später versuchen.", voiceNetwork: "Sprachdienst nicht erreichbar. Verbindung oder VPN prüfen.", voiceFailed: "Umwandlung fehlgeschlagen. Erneut versuchen.", voiceDraftFull: "Entwurf zu lang. Text kürzen und erneut versuchen." },
+    fr: { voiceStart: "Enregistrer un message vocal", voiceStop: "Arrêter l'enregistrement", voiceCancel: "Annuler l'enregistrement", voiceRecording: "Enregistrement · {time} · touchez pour arrêter", voiceTranscribing: "L’IA transcrit votre voix…", voiceReady: "Texte prêt. Vérifiez ou modifiez-le, puis envoyez-le.", voiceRetry: "Réessayer", voiceUnsupported: "Enregistrement indisponible. Vous pouvez écrire.", voicePermission: "Accès au micro refusé. Vérifiez le navigateur.", voiceNoSpeech: "Aucune parole reconnue. Réenregistrez.", voiceTooLarge: "Enregistrement trop long. Faites plus court.", voiceQuota: "Transcription temporairement saturée. Réessayez plus tard.", voiceNetwork: "Transcription inaccessible. Vérifiez la connexion ou le VPN.", voiceFailed: "Échec de la transcription. Réessayez.", voiceDraftFull: "Brouillon trop long. Raccourcissez-le puis réessayez." },
+    es: { voiceStart: "Grabar mensaje de voz", voiceStop: "Detener grabación", voiceCancel: "Cancelar grabación", voiceRecording: "Grabando · {time} · toca para terminar", voiceTranscribing: "La IA está transcribiendo tu voz…", voiceReady: "Texto listo. Revísalo o edítalo y envíalo.", voiceRetry: "Reintentar", voiceUnsupported: "No se puede grabar aquí. Aún puedes escribir.", voicePermission: "No hay permiso de micrófono. Revisa el navegador.", voiceNoSpeech: "No se detectó voz. Graba otra vez.", voiceTooLarge: "Grabación muy larga. Hazla más corta.", voiceQuota: "Transcripción temporalmente llena. Intenta más tarde.", voiceNetwork: "Sin conexión a transcripción. Revisa internet o VPN.", voiceFailed: "No se pudo transcribir. Reintenta.", voiceDraftFull: "El borrador es muy largo. Acórtalo y reintenta." },
+    zh: { voiceStart: "录制语音消息", voiceStop: "结束录音", voiceCancel: "取消录音", voiceRecording: "录音中 · {time} · 再点一次结束", voiceTranscribing: "AI 正在将语音转成文字…", voiceReady: "文字已就绪，检查或编辑后发送。", voiceRetry: "重试", voiceUnsupported: "此浏览器无法录音，仍可打字。", voicePermission: "麦克风权限被拒绝，请检查浏览器设置。", voiceNoSpeech: "未识别到语音，请重新录制。", voiceTooLarge: "录音太长，请缩短。", voiceQuota: "语音转写服务暂时繁忙，请稍后重试。", voiceNetwork: "转写服务无法连接，请检查网络或 VPN。", voiceFailed: "转写失败，请重试。", voiceDraftFull: "草稿过长，请删减后重试。" },
+    tr: { voiceStart: "Sesli mesaj kaydet", voiceStop: "Kaydı bitir", voiceCancel: "Kaydı iptal et", voiceRecording: "Kaydediliyor · {time} · bitirmek için tekrar dokun", voiceTranscribing: "Yapay zekâ sesini metne çeviriyor…", voiceReady: "Metin hazır. Kontrol et veya düzenle, sonra gönder.", voiceRetry: "Tekrar dene", voiceUnsupported: "Bu tarayıcıda kayıt yok. Yazabilirsin.", voicePermission: "Mikrofon izni reddedildi. Tarayıcı ayarlarını kontrol et.", voiceNoSpeech: "Konuşma algılanmadı. Yeniden kaydet.", voiceTooLarge: "Kayıt çok uzun. Daha kısa kaydet.", voiceQuota: "Ses hizmeti geçici olarak dolu. Sonra dene.", voiceNetwork: "Ses hizmetine bağlanılamadı. İnterneti veya VPN'i kontrol et.", voiceFailed: "Ses yazıya çevrilemedi. Tekrar dene.", voiceDraftFull: "Taslak çok uzun. Bir kısmını silip tekrar dene." },
+    it: { voiceStart: "Registra un messaggio vocale", voiceStop: "Termina registrazione", voiceCancel: "Annulla registrazione", voiceRecording: "Registrazione · {time} · tocca per fermare", voiceTranscribing: "L’IA sta trascrivendo la tua voce…", voiceReady: "Testo pronto. Controllalo o modificalo, poi invia.", voiceRetry: "Riprova", voiceUnsupported: "Registrazione non disponibile. Puoi scrivere.", voicePermission: "Microfono non autorizzato. Controlla il browser.", voiceNoSpeech: "Nessuna voce riconosciuta. Registra di nuovo.", voiceTooLarge: "Registrazione troppo lunga. Accorciala.", voiceQuota: "Trascrizione temporaneamente occupata. Riprova più tardi.", voiceNetwork: "Trascrizione non raggiungibile. Controlla internet o VPN.", voiceFailed: "Trascrizione non riuscita. Riprova.", voiceDraftFull: "Bozza troppo lunga. Riducila e riprova." },
+    ru: { voiceStart: "Записать голосовое сообщение", voiceStop: "Остановить запись", voiceCancel: "Отменить запись", voiceRecording: "Запись · {time} · нажмите ещё раз для завершения", voiceTranscribing: "ИИ преобразует речь в текст…", voiceReady: "Текст готов. Проверьте или исправьте и отправьте.", voiceRetry: "Повторить", voiceUnsupported: "Запись недоступна. Можно написать текст.", voicePermission: "Нет доступа к микрофону. Проверьте настройки браузера.", voiceNoSpeech: "Речь не распознана. Запишите снова.", voiceTooLarge: "Запись слишком длинная. Сделайте короче.", voiceQuota: "Сервис речи временно занят. Попробуйте позже.", voiceNetwork: "Нет связи с распознаванием. Проверьте интернет или VPN.", voiceFailed: "Не удалось распознать речь. Повторите.", voiceDraftFull: "Черновик слишком длинный. Сократите текст и повторите." },
   };
   const VOICE_FIX_STRINGS = {
     fa: { voiceServiceSetup: "قابلیت صوتی سرویس هنوز فعال نیست. فعلاً می‌توانی تایپ کنی.", voiceWait: "تلاش دوباره تا {time} دیگر در دسترس است؛ تایپ همچنان امکان‌پذیر است.", voiceLimit: "هر ضبط تا ۶۰ ثانیه" },
@@ -6444,18 +6440,18 @@
   for (const [code, value] of Object.entries(VOICE_REQUEST))
     STRINGS[code].voiceRequest = value;
   const SPEECH_STRINGS = {
-    fa: ["شنیدن پاسخ", "توقف خواندن", "پخش صدا در این مرورگر در دسترس نیست."],
-    en: ["Listen to reply", "Stop reading", "Audio playback is unavailable in this browser."],
-    de: ["Antwort anhören", "Vorlesen stoppen", "Sprachausgabe ist hier nicht verfügbar."],
-    fr: ["Écouter la réponse", "Arrêter la lecture", "Lecture vocale indisponible ici."],
-    es: ["Escuchar respuesta", "Detener lectura", "Lectura en voz alta no disponible."],
-    zh: ["朗读回复", "停止朗读", "此浏览器无法播放语音。"],
-    tr: ["Yanıtı dinle", "Okumayı durdur", "Sesli okuma bu tarayıcıda yok."],
-    it: ["Ascolta la risposta", "Interrompi lettura", "Lettura vocale non disponibile."],
-    ru: ["Прослушать ответ", "Остановить чтение", "Озвучивание недоступно."],
+    fa: ["شنیدن پیام", "توقف خواندن", "پخش صدا در این مرورگر در دسترس نیست."],
+    en: ["Listen to message", "Stop reading", "Audio playback is unavailable in this browser."],
+    de: ["Nachricht anhören", "Vorlesen stoppen", "Sprachausgabe ist hier nicht verfügbar."],
+    fr: ["Écouter le message", "Arrêter la lecture", "Lecture vocale indisponible ici."],
+    es: ["Escuchar mensaje", "Detener lectura", "Lectura en voz alta no disponible."],
+    zh: ["朗读消息", "停止朗读", "此浏览器无法播放语音。"],
+    tr: ["Mesajı dinle", "Okumayı durdur", "Sesli okuma bu tarayıcıda yok."],
+    it: ["Ascolta il messaggio", "Interrompi lettura", "Lettura vocale non disponibile."],
+    ru: ["Прослушать сообщение", "Остановить чтение", "Озвучивание недоступно."],
   };
   for (const [code, labels] of Object.entries(SPEECH_STRINGS))
-    Object.assign(STRINGS[code], { listenReply: labels[0], stopReading: labels[1], audioUnavailable: labels[2] });
+    Object.assign(STRINGS[code], { listenMessage: labels[0], stopReading: labels[1], audioUnavailable: labels[2] });
   // The technical cause and model attempts stay in the collapsed error details.
   const WAIT_STRINGS = {
     fa: [
@@ -7178,6 +7174,7 @@
   });
   let state = initialState();
   let speakingId = null;
+  let speechGeneration = 0;
   const voice = {
     phase: "idle", recorder: null, stream: null, chunks: [], started: 0,
     timer: null, controller: null, token: 0, lastAudio: null, lastText: null,
@@ -7424,9 +7421,11 @@
       state.inflight || !!state.pending || Date.now() < state.retryAt;
     $("finish-btn").title = t("finishHelp");
     $("finish-btn").setAttribute("aria-label", t("finish"));
-    $("finish-bar").hidden = state.phase !== "chat" || !learnerTurns().length;
+    $("finish-btn-bottom").hidden = state.phase !== "chat" || !learnerTurns().length;
     $("finish-btn-bottom").disabled =
       state.inflight || !!state.pending || Date.now() < state.retryAt;
+    $("finish-btn-bottom").title = t("finishHelp");
+    $("finish-btn-bottom").setAttribute("aria-label", t("finish"));
     $("settings-fields").disabled = !setup;
     $("starter-options").disabled = !setup;
     $("start-btn").hidden = !setup;
@@ -7564,13 +7563,13 @@
     copy.setAttribute("aria-label", COPY_LABELS[uiLang]);
     copy.addEventListener("click", () => copyText(messagePlainText(m)));
     line.append(copy);
-    if (m.role === "model" && "speechSynthesis" in window &&
+    if ("speechSynthesis" in window &&
         "SpeechSynthesisUtterance" in window) {
       const listen = node("button", "message-copy message-listen");
       listen.type = "button";
       listen.dataset.speaking = String(speakingId === m.id);
       listen.innerHTML = icon(speakingId === m.id ? "stopAudio" : "speaker");
-      listen.setAttribute("aria-label", t(speakingId === m.id ? "stopReading" : "listenReply"));
+      listen.setAttribute("aria-label", t(speakingId === m.id ? "stopReading" : "listenMessage"));
       listen.title = listen.getAttribute("aria-label");
       listen.addEventListener("click", () => readReply(m));
       line.append(listen);
@@ -7613,7 +7612,7 @@
       const active = !!id && id === speakingId;
       button.dataset.speaking = String(active);
       button.innerHTML = icon(active ? "stopAudio" : "speaker");
-      button.title = t(active ? "stopReading" : "listenReply");
+      button.title = t(active ? "stopReading" : "listenMessage");
       button.setAttribute("aria-label", button.title);
     });
   }
@@ -7623,11 +7622,14 @@
       return;
     }
     const wasPlaying = speakingId === message.id;
+    const generation = ++speechGeneration;
     speechSynthesis.cancel();
     speakingId = null;
     if (wasPlaying) { updateSpeechButtons(); return; }
     try {
-      const utterance = new SpeechSynthesisUtterance(plainInlineText(message.text));
+      const utterance = new SpeechSynthesisUtterance(
+        message.role === "model" ? plainInlineText(message.text) : message.text,
+      );
       const language = { fa: "fa-IR", en: "en-US", de: "de-DE", fr: "fr-FR",
         es: "es-ES", zh: "zh-CN", tr: "tr-TR", it: "it-IT", ru: "ru-RU" }[state.config?.target] || "en-US";
       utterance.lang = language;
@@ -7637,10 +7639,12 @@
         available.find((item) => item.lang.toLowerCase().startsWith(language.slice(0, 2).toLowerCase()));
       if (match) utterance.voice = match;
       utterance.onend = () => {
-        if (speakingId === message.id) { speakingId = null; updateSpeechButtons(); }
+        if (generation === speechGeneration && speakingId === message.id) {
+          speakingId = null; updateSpeechButtons();
+        }
       };
       utterance.onerror = () => {
-        if (speakingId === message.id) {
+        if (generation === speechGeneration && speakingId === message.id) {
           speakingId = null; updateSpeechButtons(); showToast(t("audioUnavailable"));
         }
       };
@@ -7768,7 +7772,7 @@
       const header = document
         .querySelector(".site-header")
         .getBoundingClientRect().height;
-      const controls = ["composer", "finish-bar", "ended-note"].reduce(
+      const controls = ["composer", "ended-note"].reduce(
         (n, id) => n + $(id).getBoundingClientRect().height,
         0,
       );
@@ -7786,7 +7790,6 @@
     for (const selector of [
       ".site-header",
       "#composer",
-      "#finish-bar",
       "#ended-note",
       "#messages",
       "#message-list",
@@ -9778,6 +9781,7 @@ ${JSON.stringify(REPORT_SCHEMA)}`,
   function resetSession() {
     if (state.inflight) return;
     cancelVoice();
+    speechGeneration++;
     if ("speechSynthesis" in window) speechSynthesis.cancel();
     speakingId = null;
     clearInterval(cooldownTimer);
