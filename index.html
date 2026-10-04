@@ -90,7 +90,7 @@ button svg,a svg {width:18px; height:18px}
 [data-theme="light"] .theme-toggle-knob {inset-inline-start:36px}
 
 /* Layout and setup form. */
-.workspace {max-width:1360px; margin:24px auto 0; padding:0 28px; display:grid; grid-template-columns:310px minmax(0,1fr); gap:20px; align-items:start}
+.workspace {max-width:1360px; margin:24px auto 0; padding:0 28px; display:grid; grid-template-columns:310px minmax(0,1fr); grid-template-rows:max-content 1fr; gap:20px; align-items:start}
 .panel {background:var(--surface); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow); overflow:hidden; min-width:0}
 .scene-panel {grid-column:1; grid-row:1; align-self:start}
 .chat-panel {grid-column:2; grid-row:1 / span 2; position:relative; align-self:start}
@@ -234,6 +234,7 @@ body[data-phase="setup"] .chat-head,body[data-phase="setup"] .chat-tags {display
 .chat-feedback {margin-top:6px; padding:9px 12px; border:1px solid var(--tip-border); border-radius:11px; background:var(--tip-bg); color:var(--text); line-height:1.75}
 .chat-feedback-heading {display:flex; align-items:center; gap:5px; color:var(--tip-ink); font-size:10px; font-weight:700; margin-bottom:3px}
 .chat-feedback-heading svg {width:13px; height:13px}
+.chat-feedback-copy {margin-inline-start:auto; color:var(--tip-ink)}
 .chat-feedback-improved {font-size:13px; font-weight:600; white-space:pre-wrap; unicode-bidi:plaintext; overflow-wrap:anywhere}
 .chat-feedback-explanation {font-size:11.5px; margin-top:3px; color:var(--muted); white-space:pre-wrap; overflow-wrap:anywhere}
 .chat-feedback-details {margin-top:5px; font-size:10px}
@@ -3667,6 +3668,17 @@ html[data-compact-chat="true"] body[data-phase="chat"] #scroll-down-label {displ
     it: "Copia messaggio",
     ru: "Копировать сообщение",
   };
+  const COPY_TIP_LABELS = {
+    fa: "کپی نکته",
+    en: "Copy tip",
+    de: "Tipp kopieren",
+    fr: "Copier le conseil",
+    es: "Copiar consejo",
+    zh: "复制提示",
+    tr: "İpucunu kopyala",
+    it: "Copia consiglio",
+    ru: "Копировать подсказку",
+  };
   const $ = (id) => document.getElementById(id);
   const node = (tag, className, text) => {
     const n = document.createElement(tag);
@@ -4128,7 +4140,10 @@ html[data-compact-chat="true"] body[data-phase="chat"] #scroll-down-label {displ
     copy.type = "button";
     copy.innerHTML = icon("copy");
     copy.setAttribute("aria-label", COPY_LABELS[uiLang]);
-    copy.addEventListener("click", () => copyText(messagePlainText(m)));
+    copy.title = COPY_LABELS[uiLang];
+    copy.addEventListener("click", () =>
+      copyText(m.role === "model" ? plainInlineText(m.text) : m.text),
+    );
     line.append(copy);
     if ("speechSynthesis" in window &&
         "SpeechSynthesisUtterance" in window) {
@@ -4239,6 +4254,13 @@ html[data-compact-chat="true"] body[data-phase="chat"] #scroll-down-label {displ
     const heading = node("div", "chat-feedback-heading");
     heading.innerHTML = icon("spark");
     heading.append(node("span", "", t("chatTip")));
+    const copy = node("button", "message-copy chat-feedback-copy");
+    copy.type = "button";
+    copy.innerHTML = icon("copy");
+    copy.setAttribute("aria-label", COPY_TIP_LABELS[uiLang]);
+    copy.title = COPY_TIP_LABELS[uiLang];
+    copy.addEventListener("click", () => copyText(feedbackPlainText(feedback)));
+    heading.append(copy);
     card.append(heading);
     if (feedback.improved) {
       const quote = node("div", "chat-feedback-improved");
@@ -4264,19 +4286,21 @@ html[data-compact-chat="true"] body[data-phase="chat"] #scroll-down-label {displ
   function messagePlainText(message, locale = uiLang) {
     let text =
       message.role === "model" ? plainInlineText(message.text) : message.text;
-    const feedback = message.feedback;
-    if (feedback) {
-      text += "\n\n" + t("chatTip", {}, locale) + "\n";
-      if (feedback.original)
-        text += t("original", {}, locale) + ": " + feedback.original + "\n";
-      if (feedback.improved)
-        text +=
-          t("improved", {}, locale) +
-          ": " +
-          plainInlineText(feedback.improved) +
-          "\n";
-      text += plainInlineText(feedback.explanation);
-    }
+    if (message.feedback)
+      text += "\n\n" + feedbackPlainText(message.feedback, locale);
+    return text;
+  }
+  function feedbackPlainText(feedback, locale = uiLang) {
+    let text = t("chatTip", {}, locale) + "\n";
+    if (feedback.original)
+      text += t("original", {}, locale) + ": " + feedback.original + "\n";
+    if (feedback.improved)
+      text +=
+        t("improved", {}, locale) +
+        ": " +
+        plainInlineText(feedback.improved) +
+        "\n";
+    text += plainInlineText(feedback.explanation);
     return text;
   }
   function scrollToBottom() {
