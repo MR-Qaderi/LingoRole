@@ -2,177 +2,140 @@
 
 # LingoRole | گپ‌یار
 
-**Practice real conversations. Learn from your own words.**
+### Practice real conversations. Learn from your own words.
 
-An AI-powered language roleplay app for typing or speaking, receiving in-chat feedback, and getting a personal lesson after every conversation.
+An AI-powered language practice app where you choose the scene, play your role, and turn each conversation into a personal learning experience.
 
-[**Try LingoRole →**](https://mr-qaderi.github.io/LingoRole/)
+<p>
+  <a href="https://mr-qaderi.github.io/LingoRole/"><strong>Launch LingoRole →</strong></a>
+  &nbsp; · &nbsp;
+  <a href="https://github.com/MR-Qaderi/LingoRole/issues">Report an issue</a>
+</p>
 
-No installation · No account required · Free to use
+Free to use &nbsp;·&nbsp; No installation &nbsp;·&nbsp; No account required
 
 </div>
 
 ---
 
-## About LingoRole
+## About
 
-LingoRole is a free AI-powered language learning app designed for meaningful conversation practice.
+LingoRole helps you practice a language through realistic, interactive conversations. Choose a ready-made situation—such as checking into a hotel, attending a job interview, visiting a café, or travelling—or create a scenario of your own.
 
-Instead of answering isolated exercises, you can enter a realistic situation, choose your role, define your conversation partner, and practice through an interactive roleplay. You can use ready-made scenarios such as hotel check-in, job interviews, cafés, travel, and everyday conversations, or create a completely custom setting.
+Set the roles, choose how the conversation should feel, and decide whether you or the AI starts. Then type or speak naturally and learn from the conversation as it unfolds.
 
-The main idea is simple:
+> **Choose a scene. Have a conversation. Learn from what you actually say.**
 
-> **Choose a scene, have a conversation, and learn from what you actually say.**
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f085f1e3-879e-445b-ad78-1458014fb6df" width="1000" alt="LingoRole home screen and conversation setup" />
+</p>
 
-<img width="1512" height="911" alt="1" src="https://github.com/user-attachments/assets/f085f1e3-879e-445b-ad78-1458014fb6df" />
+## Create your own roleplay
 
+Shape the practice around your goals:
 
----
+- Choose a preset scenario or describe your own.
+- Define your role and your conversation partner’s role.
+- Select a natural, friendly, formal, or challenging atmosphere.
+- Choose short, balanced, or detailed replies.
+- Add instructions to guide the conversation.
+- Decide who starts: you or the AI.
 
-## Key Features
+Most settings are optional, so you can also start quickly with the defaults.
 
-### 🎭 Custom roleplay conversations
+## Practice in nine languages
 
-Create a learning situation that matches your goal:
+LingoRole supports **Persian, English, German, French, Spanish, Chinese, Turkish, Italian, and Russian**.
 
-- Choose a ready-made scenario or write your own.
-- Define your role and your conversation partner.
-- Set the atmosphere: natural, friendly, formal, or challenging.
-- Select short, balanced, or detailed AI responses.
-- Add custom instructions for the conversation.
-- Choose whether you start the conversation or let the AI start.
+Choose the interface language, practice language, and report language separately. For example, you can practice English while receiving explanations in Persian.
 
-### 🌍 Nine interface and learning languages
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0c0d687e-0e63-4f05-bc2b-76a9bda57de8" width="1000" alt="Language, level, scenario, roles, and feedback settings" />
+</p>
 
-LingoRole supports:
+## Type, speak, and listen
 
-- Persian
-- English
-- German
-- French
-- Spanish
-- Chinese
-- Turkish
-- Italian
-- Russian
+Practice by typing or using voice input. When you speak, LingoRole turns your speech into editable text. Review or change it before sending it into the conversation.
 
-You can choose the interface language, practice language, and report language separately. For example, you can practice English while receiving explanations in Persian.
+Read-aloud controls are also available for your messages and AI replies in supported browsers.
 
-<img width="1477" height="910" alt="2" src="https://github.com/user-attachments/assets/0c0d687e-0e63-4f05-bc2b-76a9bda57de8" />
+> Voice input supports spoken practice by transcribing speech into text. The learning report analyzes the conversation text; it does not assess pronunciation or accent.
 
----
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/463495ef-cfad-48af-a780-d98f283cf084" width="620" alt="Voice input and editable message on a mobile screen" />
+</p>
 
-## Type or speak
+## Get feedback as you chat
 
-You can practice by typing or by using voice input.
+Choose the feedback style that works for you:
 
-With voice input, you speak naturally, LingoRole converts your speech into editable text, and you can review or change the text before sending it. This keeps you in control of your final message.
+- **Quick in-chat feedback, followed by a complete lesson**
+- **A complete lesson at the end only**
 
-The app also includes read-aloud controls for both your messages and AI responses in supported browsers.
+When enabled, quick feedback appears separately from the conversation. It can highlight a correction, a more natural expression, or a useful language pattern while keeping the conversation easy to follow.
 
-> Voice input helps you turn spoken practice into a written conversation. The current version focuses its educational analysis on the final conversation text and does not evaluate pronunciation or accent.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8892d743-9991-470e-95fa-fd44d5fc0f5d" width="560" alt="An AI reply with a separate in-chat learning tip" />
+</p>
 
-<img width="772" height="767" alt="3" src="https://github.com/user-attachments/assets/463495ef-cfad-48af-a780-d98f283cf084" />
+## Finish with a personal lesson
 
----
+Select **“End & Get Your Lesson”** to turn the conversation into a structured learning report. Based on what you said, it can include:
 
-## In-chat feedback
-
-You can choose between two feedback modes:
-
-- **Quick feedback during the conversation + a complete final lesson**
-- **Complete feedback only at the end**
-
-When in-chat feedback is enabled, LingoRole gives short and focused notes in a separate box. It can point out a useful correction, a more natural expression, or an important language pattern without interrupting the flow of the conversation.
-
-<img width="701" height="829" alt="4" src="https://github.com/user-attachments/assets/8892d743-9991-470e-95fa-fd44d5fc0f5d" />
-
----
-
-## Your personal lesson
-
-The most important part of LingoRole begins when you select **“End & Get Your Lesson.”**
-
-The app turns your conversation into a structured personal learning report. Depending on the content of your conversation, the lesson may include:
-
-- A summary of your communicative performance
-- Your strengths, supported by examples from your own messages
+- A summary of the conversation and your communication
+- Strengths supported by examples from your messages
 - Grammar and sentence-structure corrections
 - Vocabulary, useful expressions, and collocations
-- More natural or context-appropriate alternatives
-- Tone, politeness, and situational appropriateness
-- Coherence and clarity of ideas
+- More natural alternatives, tone, and politeness
+- Coherence and clarity
 - Spelling and punctuation when relevant
-- An estimated language level when enough evidence is available
-- A practical next learning step with a small exercise and success check
+- An estimated language level when there is enough evidence
+- A practical next step, with an exercise and a way to check your progress
 
-The lesson is evidence-based: LingoRole uses examples from your actual conversation and avoids filling the report with unnecessary generic feedback.
+The report focuses on useful points supported by the conversation. Its sections and level of detail depend on what the conversation provides, so it can stay focused when there is little to review and cover more when there is more to learn.
 
-<img width="730" height="839" alt="5" src="https://github.com/user-attachments/assets/098cf01b-5c55-408c-9789-843d0aecb327" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/098cf01b-5c55-408c-9789-843d0aecb327" width="600" alt="A personal lesson with a focused next step for learning" />
+</p>
 
----
+## Understand corrections and build vocabulary
 
-## Learn from corrections and useful vocabulary
+Learning points can show your original wording, an improved version, and an explanation. LingoRole distinguishes a correction from an alternative that simply sounds more natural, so you can see what changed and why.
 
-Each learning point can show:
+Copy useful words and expressions from the lesson and continue practising them with [LingoDeck](https://mr-qaderi.github.io/Vocabulary-Learner/), a companion app for vocabulary learning.
 
-- Your original sentence
-- An improved version
-- A clear explanation
-- A useful contrast or example
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2e63854d-1b88-4f5b-95c8-ec0125abb31f" width="1100" alt="Grammar feedback, useful vocabulary, and the LingoDeck learning link" />
+</p>
 
-Suggested alternatives are presented separately from actual corrections, so you can understand whether something was incorrect or simply could sound more natural.
+## Save and continue learning
 
-Important vocabulary and expressions can be copied directly from the lesson. You can then continue practicing them with [LingoDeck](https://mr-qaderi.github.io/Vocabulary-Learner/), a companion tool for vocabulary learning.
+Copy the report or download it as a Word document. You can choose whether to include the conversation transcript in the downloaded file.
 
-<img width="1747" height="735" alt="6" src="https://github.com/user-attachments/assets/2e63854d-1b88-4f5b-95c8-ec0125abb31f" />
+For more practice, explore the other tools in the Lingo learning collection:
 
----
-
-## Export and continue learning
-
-After finishing a conversation, you can:
-
-- Copy the complete learning report
-- Download it as a Word document
-- Choose whether to include the conversation transcript in the exported file
-- Copy important vocabulary and expressions
-- Continue vocabulary practice in [LingoDeck](https://mr-qaderi.github.io/Vocabulary-Learner/)
-- Improve longer written texts with [LingoPen](https://mr-qaderi.github.io/LingoPen/)
-
----
-
-## Privacy and practical notes
-
-- LingoRole is designed for browser-based use and does not require registration.
-- Conversation content is kept in the current page session. Download your lesson before closing or refreshing the page.
-- Relevant text and recorded audio are sent to the app’s AI processing service to generate replies, transcribe voice input, and create learning reports.
-- Service availability may depend on internet access and network restrictions. In some regions, a VPN may be required.
-
----
-
-## Companion Projects
-
-| Project | Purpose | Link |
+| Project | Focus | Link |
 | --- | --- | --- |
-| **LingoDeck** | Vocabulary and expression practice | [Open LingoDeck](https://mr-qaderi.github.io/Vocabulary-Learner/) |
+| **LingoDeck** | Vocabulary and useful expressions | [Open LingoDeck](https://mr-qaderi.github.io/Vocabulary-Learner/) |
 | **LingoPen** | Writing feedback and text improvement | [Open LingoPen](https://mr-qaderi.github.io/LingoPen/) |
-| **LingoRole** | Roleplay conversation practice and personal lessons | [Open LingoRole](https://mr-qaderi.github.io/LingoRole/) |
+| **LingoRole** | Conversation practice and personal lessons | [Open LingoRole](https://mr-qaderi.github.io/LingoRole/) |
 
----
+## Privacy and access
+
+- No registration is required.
+- Conversation content stays in the current page session. Download your lesson before closing or refreshing the page.
+- Relevant text and recorded audio are sent to the app’s processing service to generate replies, transcribe voice input, and create learning reports.
+- Access can depend on your internet connection and network. In some regions, a VPN may be needed.
 
 ## Feedback
 
-If you find a bug or have an idea for improving LingoRole, please open an [Issue](https://github.com/MR-Qaderi/LingoRole/issues).
+Found a problem or have an idea? Please open an [Issue](https://github.com/MR-Qaderi/LingoRole/issues).
 
-When reporting a problem, include your browser, device, the steps that led to the issue, and any visible error details. Please remove personal information from screenshots or conversation excerpts.
-
----
+Include your browser and device, the steps that led to the issue, and any relevant error details. Remove personal information from screenshots or conversation excerpts.
 
 <div align="center">
 
 Built by **MohammadReza Qaderi**  
-[GitHub Profile](https://github.com/MR-Qaderi)
-[LinkedIn Profile](https://www.linkedin.com/in/mr-qaderi/)
+[GitHub](https://github.com/MR-Qaderi) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/mr-qaderi/)
 
 </div>
