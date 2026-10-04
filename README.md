@@ -9,7 +9,6 @@ An AI-powered language practice app where you choose the scene, play your role, 
 <p>
   <a href="https://mr-qaderi.github.io/LingoRole/"><strong>Launch LingoRole →</strong></a>
   &nbsp; · &nbsp;
-  <a href="https://github.com/MR-Qaderi/LingoRole/issues">Report an issue</a>
 </p>
 
 Free to use &nbsp;·&nbsp; No installation &nbsp;·&nbsp; No account required
