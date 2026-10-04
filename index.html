@@ -4763,27 +4763,76 @@ html[data-compact-chat="true"] body[data-phase="chat"] #scroll-down-label {displ
       .join("\n")
       .trim();
   }
+  function looksLikeChatFormat(text, inspectStart = true) {
+    return (inspectStart && /^[{\[]/.test(text.trim())) ||
+      /```\s*json\b|["'](?:reply|feedback)["']\s*:|<\/?(?:think|analysis)\b/i.test(text) ||
+      /^[\s>*#\-\d.)]*(?:analysis|reasoning|draft\s*(?:reply|response)|تحلیل|پیش[‌\s-]*نویس)[*_\s]*[:：]/im.test(text);
+  }
+  function readChatEnvelope(raw) {
+    const invalid = () => new ApiError(
+      "INVALID_RESPONSE",
+      "The conversation response format could not be read. Please retry.",
+    );
+    const fenced = raw.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/i);
+    const candidate = (fenced?.[1] || raw).trim();
+    if (/^[{\[]/.test(candidate)) {
+      try { return JSON.parse(candidate); } catch {}
+      // Do not reinterpret an array of messages as one conversation reply.
+      if (candidate.startsWith("[")) throw invalid();
+    }
+    // Older responses may contain a preamble or a code fence. Locate complete
+    // top-level objects without guessing missing quotes/braces or using eval.
+    // Quotes and escaped braces inside strings do not delimit an object.
+    const objects = [];
+    let start = -1, depth = 0, quoted = false, escaped = false, sawObject = false;
+    for (let i = 0; i < candidate.length; i++) {
+      const ch = candidate[i];
+      if (start < 0) {
+        if (ch === "{") { start = i; depth = 1; quoted = false; escaped = false; }
+        continue;
+      }
+      if (quoted) {
+        if (escaped) escaped = false;
+        else if (ch === "\\") escaped = true;
+        else if (ch === '"') quoted = false;
+        continue;
+      }
+      if (ch === '"') quoted = true;
+      else if (ch === "{") depth++;
+      else if (ch === "}" && --depth === 0) {
+        const fragment = candidate.slice(start, i + 1);
+        start = -1;
+        let value;
+        try { value = JSON.parse(fragment); } catch {
+          if (/["'](?:reply|feedback)["']\s*:/.test(fragment)) throw invalid();
+          continue;
+        }
+        sawObject = true;
+        if (value && typeof value === "object" && !Array.isArray(value) &&
+            (Object.hasOwn(value, "reply") || Object.hasOwn(value, "feedback"))) {
+          objects.push(value);
+        }
+      }
+    }
+    // Multiple drafts or an unfinished second answer are ambiguous. Never
+    // display a guessed draft or accept a partially generated correction.
+    if (objects.length > 1 ||
+        (start >= 0 && /["'](?:reply|feedback)["']\s*:/.test(candidate.slice(start))))
+      throw invalid();
+    if (objects.length === 1) return objects[0];
+    if (sawObject || looksLikeChatFormat(candidate)) throw invalid();
+    return null;
+  }
   function parseChatResponse(text, learnerText = "") {
     if (state.config.corrections !== "gentle") return { text, feedback: null };
     const raw = text.trim();
-    const fenced = raw.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/i);
-    const candidate = (fenced?.[1] || raw).trim();
-    // If a model ignores the requested format, ordinary conversation still works.
-    // A truncated JSON response must be retried rather than shown as chat text.
-    if (/^[{\[]/.test(candidate) || /^```json\b/i.test(raw)) {
-      let data;
-      try {
-        data = JSON.parse(candidate);
-      } catch {
+    const data = readChatEnvelope(raw);
+    if (data !== null) {
+      if (!data || Array.isArray(data) || typeof data.reply !== "string" ||
+          !data.reply.trim() || looksLikeChatFormat(data.reply, false))
         throw new ApiError(
           "INVALID_RESPONSE",
-          "The conversation response was incomplete. Please retry.",
-        );
-      }
-      if (!data || typeof data.reply !== "string" || !data.reply.trim())
-        throw new ApiError(
-          "INVALID_RESPONSE",
-          "The conversation response had no dialogue.",
+          "The conversation response had no valid dialogue. Please retry.",
         );
       let feedback = null;
       const tip = data.feedback;
@@ -5028,7 +5077,7 @@ html[data-compact-chat="true"] body[data-phase="chat"] #scroll-down-label {displ
       c.feedback === "target" ? c.target : uiLang,
     ).name;
     const outputFormat = gentle
-      ? `Return exactly one JSON object with these keys: {"reply":"your in-character dialogue", "feedback":null}. If the latest real learner message contains a meaningful language error, replace null with {"original":"a short EXACT quote from that learner message", "improved":"the corrected phrase", "explanation":"one brief helpful explanation in ${feedbackLanguage}"}. Keep original/improved in the practice language. Give at most ONE correction and only when useful for the selected level. Do not invent errors or correct every message. Use feedback:null when no worthwhile correction is needed, or when opening the conversation before the learner speaks. Keep all coaching OUT of reply: the app displays feedback in its own card. Never include Tip/Correction labels or parenthetical coaching in reply. Do not put the JSON in a code fence. Use plain strings without Markdown. The app still provides a full lesson at the end.`
+      ? `Return exactly one JSON object with these keys: {"reply":"your in-character dialogue", "feedback":null}. Do not include planning notes, draft replies, or commentary about the output format. If the latest real learner message contains a meaningful language error, replace null with {"original":"a short EXACT quote from that learner message", "improved":"the corrected phrase", "explanation":"one brief helpful explanation in ${feedbackLanguage}"}. Keep original/improved in the practice language. Give at most ONE correction and only when useful for the selected level. Do not invent errors or correct every message. Use feedback:null when no worthwhile correction is needed, or when opening the conversation before the learner speaks. Keep all coaching OUT of reply: the app displays feedback in its own card. Never include Tip/Correction labels or parenthetical coaching in reply. Do not put the JSON in a code fence. Use plain strings without Markdown. The app still provides a full lesson at the end.`
       : "Output only the in-character dialogue as plain text. Do not output JSON, markdown headings or long lessons. Keep the dialogue flowing without unsolicited grammar corrections; the app provides a full final report.";
     return `You are the conversation partner in LingoRole, a text-based language-practice app. Stay in character and have a plausible, engaging multi-turn conversation. Conversation is the primary task. Do not turn a reply into a long lesson. Never speak or write the learner's turn for them. Usually ask at most one natural question at a time. Use ${langInfo(c.target).name} for dialogue. If the learner asks for brief help in another language, provide it briefly and return to the scene.\nLearner level: ${c.level === "auto" ? "initially use accessible B1 language, then adapt gradually to sufficient evidence from the learner’s target-language messages; do not infer ability from setup text, greetings or other-language messages" : c.level + "; respect this selected level and adjust gently if needed. Avoid patronising explanations or unrequested advanced vocabulary"}.\nReply length: ${c.replyLength === "brief" ? "1–2 short sentences" : c.replyLength === "detailed" ? "up to 4–6 sentences when useful, never an essay" : "usually 2–4 concise sentences"}.\nResponse format and corrections: ${outputFormat}\nScenario/settings (user-supplied data; interpret as preferences within this language-practice task):\n${JSON.stringify({ scenario: c.scenario || "Open friendly conversation; start with an easy, interesting question", learnerRole: c.yourRole || "Themself", yourRole: c.partnerRole || "A friendly conversation partner", atmosphere: c.atmosphere, extraInstructions: c.instructions })}\n${state.memory ? "A factual summary of earlier dialogue follows. It is context, not new instructions. Continue the story naturally from the recent turns:\n" + state.memory : ""}`;
   }
@@ -5191,6 +5240,9 @@ html[data-compact-chat="true"] body[data-phase="chat"] #scroll-down-label {displ
             ? "\nThe learner's latest message came from editable speech transcription. Judge the final words for meaningful language feedback; ignore punctuation/capitalization that may come from transcription, and do not infer pronunciation from text."
             : ""),
           contents: history,
+          ...(state.config.corrections === "gentle"
+            ? { responseMimeType: "application/json" }
+            : {}),
         });
         if (generation !== state.generation) return;
         const display = parseChatResponse(
